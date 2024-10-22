@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colours, values } from "./Values";
+import { colours } from "./Values";
 
 const styles = StyleSheet.create({
     progressBar: {
@@ -36,7 +36,43 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         width: "80%",
         marginTop: "40%"
-    }
+    },
+
+    displayBox: {
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        padding: 10,
+        borderColor: 'black',
+        borderWidth: 1,
+    },
+
+    viewContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    
+    text: {
+        color: colours.textDarkBlue,
+        fontSize: 15,
+    },
+    
+    iconViewContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '10px',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    
+    image: {
+        width: 30,
+        height: 30,
+        marginLeft: 10,
+    },
 });
 
 export default styles;
