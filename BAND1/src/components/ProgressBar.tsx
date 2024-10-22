@@ -9,18 +9,21 @@ type ProgressBarProps = {
 
 type ProgressBarUnitProps = {
     isActive: boolean;
+    altText: string;
 }
 
-const ProgressBarUnit = (isActive: ProgressBarUnitProps) => {
+const ProgressBarUnit = ({isActive, altText}: ProgressBarUnitProps) => {
     return <Image 
         source={{uri: isActive ? "" : ""}}
-        alt={isActive ? "" : ""}
+        alt={altText}
     />
 };
 
 const ProgressBar = ({activePage, numberOfPages}: ProgressBarProps) => {
     return <View style={styles.progressBar}>
-        {Array.from({length: numberOfPages}).map((it, i) => <ProgressBarUnit isActive={i === activePage}/>)}
+        {Array.from({length: numberOfPages}).map((it, i) => 
+            <ProgressBarUnit isActive={i === activePage} altText={activePage + " of " + numberOfPages}/>
+            )}
     </View>;
 }; 
 
