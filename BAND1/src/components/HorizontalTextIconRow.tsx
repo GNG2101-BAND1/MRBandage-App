@@ -12,17 +12,23 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: 'black',
+    fontSize: 15,
   },
   iconViewContainer: {
     display: 'flex',
     flexDirection: 'row',
     gap: '10px',
     justifyContent: 'flex-end',
-    alignContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    width: 200,
+    width: 30,
+    height: 30,
+    marginLeft: 10,
   },
 });
 
@@ -33,12 +39,12 @@ const HorizontalTextIconRow = ({
 }: HorizontalTextIconRowProp) => {
   return (
     <View style={styles.viewContainer}>
-      <Text>{text}</Text>
+      <Text style={styles.text}>{text}</Text>
       <View style={styles.iconViewContainer}>
         {iconSrcArray.map((iconSrc, index) => {
           return (
-            <TouchableHighlight onPress={() => iconOnClickArray[index]}>
-              <Image src={iconSrc} style={styles.image} />
+            <TouchableHighlight key={index} onPress={iconOnClickArray[index]}>
+              <Image source={{uri: iconSrc}} style={styles.image} />
             </TouchableHighlight>
           );
         })}

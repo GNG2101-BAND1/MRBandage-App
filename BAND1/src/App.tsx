@@ -25,6 +25,9 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import DisplayBox from './components/DisplayBox';
+import HorizontalTextIconRow from './components/HorizontalTextIconRow';
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -58,6 +61,10 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const imageOnclickTest = () => {
+    console.log('Image clicked!');
+  };
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -68,6 +75,13 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
+      <DisplayBox>
+        <HorizontalTextIconRow
+          text="Testing HorizontalTextIconRow Component"
+          iconSrcArray={['https://reactjs.org/logo-og.png']}
+          iconOnClickArray={[imageOnclickTest]}
+        />
+      </DisplayBox>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
@@ -76,9 +90,7 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Test folder structure.
-          </Section>
+          <Section title="Step One">Test folder structure.</Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>

@@ -4,10 +4,13 @@ import type {PropsWithChildren} from 'react';
 
 const styles = StyleSheet.create({
   displayBox: {
-    backgroundColor: 'White',
+    backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
+    padding: 10,
+    borderColor: 'black',
+    borderWidth: 1,
   },
 });
 
