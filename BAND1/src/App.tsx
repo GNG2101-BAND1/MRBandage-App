@@ -77,7 +77,7 @@ function App(): React.JSX.Element {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Section title="Step One">
-            Sample change.
+            Test folder structure.
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
