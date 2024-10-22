@@ -25,6 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import ProgressBar from './components/ProgressBar';
+import BigLogo from './components/BigLogo';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -72,7 +73,7 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
+        <BigLogo name="Test" slogan="lorem ipsum"/>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
