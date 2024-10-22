@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
-import { Image } from 'react-native';
+import React from 'react';
+import { Image, View } from 'react-native';
+import styles from '../Styles';
 
 type ProgressBarProps = {
     activePage: number;
     numberOfPages: number;
 };
 
-const ProgressBarUnit = (isActive: boolean) => {
+type ProgressBarUnitProps = {
+    isActive: boolean;
+}
+
+const ProgressBarUnit = (isActive: ProgressBarUnitProps) => {
     return <Image 
         source={{uri: isActive ? "" : ""}}
         alt={isActive ? "" : ""}
@@ -14,7 +19,9 @@ const ProgressBarUnit = (isActive: boolean) => {
 };
 
 const ProgressBar = ({activePage, numberOfPages}: ProgressBarProps) => {
-    for (let i: number = 0; i < numberOfPages; i++) {
-        
-    }
+    return <View style={styles.progressBar}>
+        {Array.from({length: numberOfPages}).map((it, i) => <ProgressBarUnit isActive={i === activePage}/>)}
+    </View>;
 }; 
+
+export default ProgressBar;
