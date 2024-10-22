@@ -24,6 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import ProgressBar from './components/ProgressBar';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -76,6 +77,7 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <ProgressBar activePage={2} numberOfPages={4}/>
           <Section title="Step One">
             Test folder structure.
           </Section>
