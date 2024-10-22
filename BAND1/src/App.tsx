@@ -27,6 +27,8 @@ import {
 
 import DisplayBox from './components/DisplayBox';
 import HorizontalTextIconRow from './components/HorizontalTextIconRow';
+import ProgressBar from './components/ProgressBar';
+import BigLogo from './components/BigLogo';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -85,12 +87,15 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
+        <BigLogo name="Test" slogan="lorem ipsum"/>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">Test folder structure.</Section>
+          <ProgressBar activePage={2} numberOfPages={4}/>
+          <Section title="Step One">
+            Test folder structure.
+          </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>
