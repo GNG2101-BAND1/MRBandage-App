@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'space-evenly'
   },
 
   progressBar: {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '80%',
     maxHeight: '50%',
-    flex: 1,
+    minHeight: "45%",
   },
 
   displayBox: {
@@ -58,6 +59,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
     height: '20%',
+    flex: 1,
   },
 
   viewContainer: {
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
 
   bottomAlignContainer: {
     flex: 1,
-    maxHeight: '50%',
+    maxHeight: "25%",
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-end',

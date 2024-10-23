@@ -6,8 +6,14 @@ import ProgressBar from '../components/ProgressBar';
 import Button from '../components/Button';
 import DisplayBox from '../components/DisplayBox';
 import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const ConnectScreen = () => {
+type RootStackParamList = {
+  Connect: undefined,
+  Result: undefined,
+}
+
+const ConnectScreen = ({navigation}: any) => {
   const numberOfSteps = 3;
   const [stepNumber, setStepNumber] = useState(0);
   const [buttonText, setButtonText] = useState('Connect Device');
@@ -89,7 +95,7 @@ const ConnectScreen = () => {
                   console.log(stepNumber + 1);
                 }
               } else {
-                // move to new page
+                navigation.navigate('Result');
               }
             }}
           />

@@ -11,4 +11,17 @@ const values = {
     progressBarWidth: 6,
 }
 
-export {colours, values};
+const images = {
+    logo: require('./assets/logo.png'),
+    icons: {
+        camera: require('./assets/'),
+        heart: require('./assets/'),
+        thermometer: require('./assets/'),
+        drop: require('./assets/'),
+    },
+    devices: {
+
+    },
+}
+
+export {colours, values, images};
