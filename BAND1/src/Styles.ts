@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     },
 
     progressBarUnitFocused: {
-        flex: 1,
+        flex: 2,
         margin: 5,
         elevation: 2,
     },
