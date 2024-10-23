@@ -9,7 +9,7 @@ type ButtonProps = {
 
 const Button = ({onPress, title}: ButtonProps) => {
     return <Pressable style={styles.button} onPress={onPress}>
-        <Text>{title}</Text>
+        <Text style={styles.buttonText}>{title}</Text>
     </Pressable>
 }
 

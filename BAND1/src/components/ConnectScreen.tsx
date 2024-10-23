@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Linking, Text, View } from "react-native";
 import styles from "../Styles";
 import BigLogo from "./BigLogo";
 import ProgressBar from "./ProgressBar";
@@ -15,27 +15,38 @@ const ConnectScreen = () => {
         
         {/* add code to show display box here */}
 
-        <ProgressBar numberOfPages={numberOfSteps} activePage={Math.floor(stepNumber / 2)} />
-        <Button title={buttonText} onPress={() => {
-            if (!(stepNumber === 5)) {
-                switch(stepNumber + 1) {
-                    case 2:
-                        setButtonText("Select Device");
-                        break;
-                    case 3:
-                        setButtonText("Connect Device");
-                        break;
-                    case 4:
-                        setButtonText("Continue");
-                        break;
-                }
+        <View style={styles.bottomAlignContainer}>
+            <ProgressBar numberOfPages={numberOfSteps} activePage={Math.floor(stepNumber / 2)} />
 
-                setStepNumber(stepNumber + 1);
-            } else {
-                // move to new page
-            }
-        }} />
+            <Button title={buttonText} onPress={() => {
+                    if (!(stepNumber === 5)) {
+                        switch(stepNumber + 1) {
+                            case 2:
+                                setButtonText("Select Device");
+                                break;
+                            case 3:
+                                setButtonText("Connect Device");
+                                break;
+                            case 4:
+                                setButtonText("Continue");
+                                break;
+                        }
 
+                        setStepNumber(stepNumber + 1);
+                    } else {
+                        // move to new page
+                    }
+                }} />
+
+            <View style={styles.horizontalSameLine}>
+                <Text style={styles.caption}>Have a problem? See our </Text>
+                <Text 
+                    style={[styles.caption, styles.hyperlink]}
+                    onPress={() => {Linking.openURL("https://github.com/GNG2101-BAND1/BAND1-app") /*Temp link to repo*/ }}>
+                    FAQ page
+                </Text>
+            </View>
+        </View>
     </View>;
 };
 

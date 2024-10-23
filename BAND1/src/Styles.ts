@@ -7,25 +7,23 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         flexDirection: "column",
-        justifyContent: "space-between",
         alignItems: "center",
     },
 
     progressBar: {
         flexDirection: "row",
         width: "50%",
-        alignSelf: "center",
-        flex: 1,
     },
 
     progressBarUnitFocused: {
-        flex: 2,
-        margin: 5
+        flex: 1,
+        margin: 5,
+        elevation: 2,
     },
 
     progressBarUnitUnfocused: {
         flex: 1,
-        margin: 5
+        margin: 5,
     },
 
     appName: {
@@ -47,8 +45,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-end",
         width: "80%",
-        height: "50%",
-        flex: 2,
+        maxHeight: "50%",
+        flex: 1,
     },
 
     displayBox: {
@@ -88,8 +86,44 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 25,
+        elevation: 1,
+        backgroundColor: colours.brandDarkRed,
+        margin: 20,
     },
+
+    buttonText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: colours.bgColour,
+    },
+
+    hyperlink: {
+        textDecorationLine: "underline",
+    },
+
+    caption: {
+        color: colours.brandDarkRed,
+        fontSize: 12,
+        marginBottom: "10%",
+    },
+
+    horizontalSameLine: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    bottomAlignContainer: {
+        flex: 1,
+        maxHeight: "50%",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-end",
+    }
 });
 
 export default styles;
