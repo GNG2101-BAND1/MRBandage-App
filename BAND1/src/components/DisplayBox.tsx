@@ -1,23 +1,18 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import type {PropsWithChildren} from 'react';
+import styles from '../Styles';
 
-const styles = StyleSheet.create({
-  displayBox: {
-    backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    padding: 10,
-    borderColor: 'black',
-    borderWidth: 1,
-  },
-});
+type DisplayBoxProp = PropsWithChildren<{
+  visible: boolean,
+}>;
 
-type DisplayBoxProp = PropsWithChildren<{}>;
-
-const DisplayBox = ({children}: DisplayBoxProp) => {
-  return <View style={styles.displayBox}>{children}</View>;
+const DisplayBox = ({children, visible}: DisplayBoxProp) => {
+  if (visible) {
+    return <View style={styles.displayBox}>{children}</View>;
+  } else {
+    return <></>
+  }
 };
 
 export default DisplayBox;
