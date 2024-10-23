@@ -6,10 +6,13 @@
  */
 
 import React from 'react';
-import ConnectScreen from './components/ConnectScreen';
+import ConnectScreen from './screen/ConnectScreen';
 
 function App(): React.JSX.Element {
-  return <ConnectScreen />
+  // For changing screen, we can have a state to keep track of all the necessary information we need (device info and initial ph color)
+  // once requirements are satisfied we can update the state and change the screen by conditionally rendering a different screen component
+  // for now we have the connect screen.
+  return <ConnectScreen />;
 }
 
 export default App;
