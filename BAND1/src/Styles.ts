@@ -2,10 +2,20 @@ import { StyleSheet } from "react-native";
 import { colours } from "./Values";
 
 const styles = StyleSheet.create({
+    screen: {
+        backgroundColor: colours.bgColour,
+        width: "100%",
+        height: "100%",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+
     progressBar: {
         flexDirection: "row",
         width: "50%",
-        alignSelf: "center"
+        alignSelf: "center",
+        flex: 1,
     },
 
     progressBarUnitFocused: {
@@ -21,21 +31,24 @@ const styles = StyleSheet.create({
     appName: {
         margin: 10,
         fontSize: 36,
-        color: colours.brandDarkRed
+        color: colours.brandDarkRed,
+        textAlign: "center",
     },
 
     appSlogan: {
         margin: 5,
         fontSize: 15,
-        color: colours.brandLightOrange
+        color: colours.brandLightOrange,
+        textAlign: "center",
     },
 
     bigLogo: {
         flexDirection: "column",
         alignItems: "center",
-        alignSelf: "center",
+        justifyContent: "flex-end",
         width: "80%",
-        marginTop: "40%"
+        height: "50%",
+        flex: 2,
     },
 
     displayBox: {
@@ -72,6 +85,10 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         marginLeft: 10,
+    },
+
+    button: {
+        flex: 1,
     },
 });
 
