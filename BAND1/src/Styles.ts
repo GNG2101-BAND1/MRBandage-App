@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
     height: '100%',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    padding: "5%",
   },
 
   progressBar: {
@@ -67,6 +68,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
   },
 
   text: {
@@ -119,7 +121,6 @@ const styles = StyleSheet.create({
   caption: {
     color: colours.brandDarkRed,
     fontSize: 12,
-    marginBottom: '10%',
   },
 
   horizontalSameLine: {
@@ -127,13 +128,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  bottomAlignContainer: {
+  sectionContainer: {
     flex: 1,
     maxHeight: "25%",
+    width: "100%",
+    margin: 10,
+  },
+
+  bottomAlignContainer: {
     flexDirection: 'column',
-    alignItems: 'center',
     justifyContent: 'flex-end',
   },
+
+  centerAlignContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  spacedEvenlyContainer: {
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+
+  leftAlignContainer: {
+    justifyContent: 'flex-start',
+  },
+
+  heading: {
+    color: colours.brandDarkRed,
+    fontSize: 20,
+    textAlign: 'left',
+  },
+
 });
 
 export default styles;

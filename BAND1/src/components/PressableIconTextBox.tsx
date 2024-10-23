@@ -10,9 +10,9 @@ type IconTextProp = {
 
 const PressableIconTextBox = ({iconSource, onPress, text}: IconTextProp) => {
     return <TouchableHighlight onPress={onPress}>
-            <View style={styles.iconViewContainer}>
-                <Image source={iconSource} />
-                <Text style={styles.text}>{text}</Text>
+            <View style={[styles.viewContainer, styles.leftAlignContainer]}>
+                <Image style={styles.image} source={iconSource} />
+                <Text style={styles.heading}>{text}</Text>
             </View>
         </TouchableHighlight>
 }

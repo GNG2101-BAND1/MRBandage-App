@@ -12,8 +12,12 @@ type SectionProps = PropsWithChildren<{
     sectionTitle: string,
 }>;
 
+type MessageProps = {
+    message: string,
+};
+
 const ResultSection = ({children, iconSource, sectionTitle}: SectionProps) => {
-    return <View>
+    return <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
         <PressableIconTextBox iconSource={iconSource} text={sectionTitle} onPress={undefined}/>
         <DisplayBox visible={true}>
             {children}
@@ -21,15 +25,21 @@ const ResultSection = ({children, iconSource, sectionTitle}: SectionProps) => {
     </View>
 }
 
+const InfoBox = ({message}: MessageProps) => {
+    return <Text style={styles.appSlogan}>{message}</Text>
+}
+
 const ResultScreen = ({navigation} : any) => {
     const [message, setMessage] = useState("Device Connected");
 
     return <View style={styles.screen}>
-        <SmallLogo name="SmartBandaid"/>
+        <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
+            <SmallLogo name={"Smart\nBandaid"}/>
 
-        <View style={styles.bottomAlignContainer}>
-            <Text style={styles.appSlogan}>{message}</Text>
-            <ProgressBar numberOfPages={3} activePage={-1}/> {/* dummy progress bar with no active page for aesthetics */}
+            <View style={[styles.sectionContainer, styles.centerAlignContainer, styles.bottomAlignContainer]}>
+                <InfoBox message={message}/>
+                <ProgressBar numberOfPages={3} activePage={-1}/>
+            </View>
         </View>
 
         <ResultSection iconSource={images.icons.heart} sectionTitle="Result"></ResultSection>

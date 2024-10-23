@@ -14,10 +14,10 @@ const values = {
 const images = {
     logo: require('./assets/logo.png'),
     icons: {
-        camera: require('./assets/'),
-        heart: require('./assets/'),
-        thermometer: require('./assets/'),
-        drop: require('./assets/'),
+        camera: require('./assets/camera.png'),
+        heart: require('./assets/result.png'),
+        thermometer: require('./assets/temperature.png'),
+        drop: require('./assets/pH.png'),
     },
     devices: {
 

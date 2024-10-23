@@ -67,7 +67,7 @@ const ConnectScreen = ({navigation}: any) => {
         /> */}
       </DisplayBox>
 
-      <View style={styles.bottomAlignContainer}>
+      <View style={[styles.sectionContainer, styles.centerAlignContainer, styles.bottomAlignContainer]}>
         <ProgressBar
           numberOfPages={numberOfSteps}
           activePage={Math.floor(stepNumber / 2)}
