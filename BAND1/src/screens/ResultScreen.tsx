@@ -1,11 +1,15 @@
 import React, { PropsWithChildren, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 import styles from "../Styles";
 import SmallLogo from "../components/SmallLogo";
 import ProgressBar from "../components/ProgressBar";
 import PressableIconTextBox from "../components/PressableIconTextBox";
 import DisplayBox from "../components/DisplayBox";
 import { images } from "../Values";
+import HorizontalTextIconRow from "../components/HorizontalTextIconRow";
+import ColouredCircle from "../components/ColouredCircle";
+import { Image as SvgImage } from "react-native-svg";
+import PressableIcon from "../components/PressableIcon";
 
 type SectionProps = PropsWithChildren<{
     iconSource: any,
@@ -42,9 +46,33 @@ const ResultScreen = ({navigation} : any) => {
             </View>
         </View>
 
-        <ResultSection iconSource={images.icons.heart} sectionTitle="Result"></ResultSection>
-        <ResultSection iconSource={images.icons.thermometer} sectionTitle="Temperature"></ResultSection>
-        <ResultSection iconSource={images.icons.drop} sectionTitle="pH Level"></ResultSection>
+        <ResultSection iconSource={images.icons.heart} sectionTitle="Result">
+            <Text style={styles.text}>Calculating...</Text>
+        </ResultSection>
+        <ResultSection iconSource={images.icons.thermometer} sectionTitle="Temperature">
+            <Text style={styles.text}>{'Average: --\u2103'}</Text>
+            <Text style={styles.text}>{'High: --\u2103'}</Text>
+            <Text style={styles.text}>{'Low: --\u2103'}</Text>
+        </ResultSection>
+        <ResultSection iconSource={images.icons.drop} sectionTitle="pH Level">
+            <HorizontalTextIconRow text='Initial pH color:'>
+                <PressableIcon onPress={() => {console.log('icon clicked')}}>
+                    <View style={styles.image}>
+                        <ColouredCircle colour='green'/>
+                    </View>
+                </PressableIcon>
+            </HorizontalTextIconRow>
+            <HorizontalTextIconRow text='Current pH color:'>
+                <PressableIcon onPress={() => {console.log('icon clicked')}}>
+                    <Image style={styles.image} source={images.icons.camera} />
+                </PressableIcon>
+                <PressableIcon onPress={() => {console.log('icon clicked')}}>
+                    <View style={styles.image}>
+                        <ColouredCircle colour='white'/>
+                    </View>
+                </PressableIcon>
+            </HorizontalTextIconRow>
+        </ResultSection>
     </View>
 }
 

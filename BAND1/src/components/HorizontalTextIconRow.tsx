@@ -1,29 +1,17 @@
-import React from 'react';
-import {Image, Text, TouchableHighlight, View} from 'react-native';
+import React, { PropsWithChildren } from 'react';
+import {Text, View} from 'react-native';
 import styles from '../Styles';
 
-type HorizontalTextIconRowProp = {
+type HorizontalTextIconRowProp = PropsWithChildren<{
   text: string;
-  iconSrcArray: string[];
-  iconOnClickArray: any;
-};
+}>;
 
-const HorizontalTextIconRow = ({
-  text,
-  iconSrcArray,
-  iconOnClickArray,
-}: HorizontalTextIconRowProp) => {
+const HorizontalTextIconRow = ({children, text}: HorizontalTextIconRowProp) => {
   return (
     <View style={styles.viewContainer}>
       <Text style={styles.text}>{text}</Text>
       <View style={styles.iconViewContainer}>
-        {iconSrcArray.map((iconSrc, index) => {
-          return (
-            <TouchableHighlight key={index} onPress={iconOnClickArray[index]}>
-              <Image source={{uri: iconSrc}} style={styles.image} />
-            </TouchableHighlight>
-          );
-        })}
+        {children}
       </View>
     </View>
   );
