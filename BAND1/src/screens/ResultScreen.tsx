@@ -67,6 +67,9 @@ const ResultScreen = ({navigation} : any) => {
                     <Image style={styles.image} source={images.icons.camera} />
                 </PressableIcon>
                 <PressableIcon onPress={() => {console.log('icon clicked')}}>
+                    <Image style={styles.image} source={images.icons.arrow} />
+                </PressableIcon>
+                <PressableIcon onPress={() => {console.log('icon clicked')}}>
                     <View style={styles.image}>
                         <ColouredCircle colour='white'/>
                     </View>

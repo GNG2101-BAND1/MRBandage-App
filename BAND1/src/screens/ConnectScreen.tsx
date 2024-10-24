@@ -58,13 +58,6 @@ const ConnectScreen = ({navigation}: any) => {
             />
           </View>
         ) : null}
-        {/* <HorizontalTextIconRow
-          text="testing"
-          iconSrcArray={[
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Arduino_Uno_-_R3.jpg/440px-Arduino_Uno_-_R3.jpg',
-          ]}
-          iconOnClickArray={[() => console.log('Pressed')]}
-        /> */}
       </DisplayBox>
 
       <View style={[styles.sectionContainer, styles.centerAlignContainer, styles.bottomAlignContainer]}>
@@ -78,9 +71,6 @@ const ConnectScreen = ({navigation}: any) => {
             onPress={() => {
               if (!(stepNumber === 5)) {
                 switch (stepNumber + 1) {
-                  //   case 2:
-                  //     setButtonText('Select Device');
-                  //     break;
                   case 3:
                     setButtonText('Connect Device');
                     break;

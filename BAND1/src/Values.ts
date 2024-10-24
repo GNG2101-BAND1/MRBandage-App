@@ -18,6 +18,7 @@ const images = {
         heart: require('./assets/result.png'),
         thermometer: require('./assets/temperature.png'),
         drop: require('./assets/pH.png'),
+        arrow: require('./assets/arrow.png')
     },
     devices: {
 
