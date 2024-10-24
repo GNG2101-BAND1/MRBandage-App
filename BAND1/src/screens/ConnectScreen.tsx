@@ -44,7 +44,10 @@ const DisplayBoxContent = ({
     case 3:
       return (
         <>
-          <Text style={styles.text}>Devices Found:</Text>
+          <Text style={styles.text}>
+            {!deviceList ? 'Devices Found:' : 'No devices were found...'}
+          </Text>
+
           {deviceList?.map(device => {
             return (
               <DeviceBox
@@ -163,6 +166,10 @@ const ConnectScreen = ({navigation}: any) => {
               if (!(stepNumber === 5)) {
                 switch (stepNumber + 1) {
                   case 3:
+                    if (selectedDevice === '') {
+                      console.log('Please select a device');
+                      return;
+                    }
                     setButtonText('Connect Device');
                     setDeviceList([selectedDevice]);
                     break;
