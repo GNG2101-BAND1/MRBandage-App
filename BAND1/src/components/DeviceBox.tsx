@@ -1,17 +1,33 @@
-import React from "react";
-import PressableIconTextBox from "./PressableIconTextBox";
+import React, {useState} from 'react';
+import PressableIconTextBox from './PressableIconTextBox';
 
 type DeviceProps = {
-    deviceName: string,
-    iconSource: any,
-}
+  deviceName: string;
+  iconSource: any;
+  onSelect: any;
+  selected: boolean;
+};
 
-const DeviceBox = ({deviceName, iconSource}: DeviceProps) => {
-    return <PressableIconTextBox text={deviceName} iconSource={iconSource} onPress={() => {selectDevice(deviceName)}}/>
-}
+const DeviceBox = ({
+  deviceName,
+  iconSource,
+  onSelect,
+  selected,
+}: DeviceProps) => {
+  return (
+    <PressableIconTextBox
+      text={deviceName}
+      iconSource={iconSource}
+      onPress={() => {
+        onSelect(deviceName);
+      }}
+      selected={selected}
+    />
+  );
+};
 
-function selectDevice(deviceName: string) {
-    // add logic to handle device being selected here
-}
+// function selectDevice(deviceName: string) {
+//     // add logic to handle device being selected here
+// }
 
 export default DeviceBox;
