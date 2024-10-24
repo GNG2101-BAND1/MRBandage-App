@@ -5,14 +5,18 @@ type DeviceProps = {
   deviceName: string;
   iconSource: any;
   onSelect: any;
-  selected: boolean;
+  viewStyle: any;
+  iconStyle: any;
+  textStyle: any;
 };
 
 const DeviceBox = ({
   deviceName,
   iconSource,
   onSelect,
-  selected,
+  viewStyle,
+  iconStyle,
+  textStyle,
 }: DeviceProps) => {
   return (
     <PressableIconTextBox
@@ -21,7 +25,9 @@ const DeviceBox = ({
       onPress={() => {
         onSelect(deviceName);
       }}
-      selected={selected}
+      viewStyle={viewStyle}
+      iconStyle={iconStyle}
+      textStyle={textStyle}
     />
   );
 };

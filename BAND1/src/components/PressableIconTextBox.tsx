@@ -12,37 +12,24 @@ type IconTextProp = {
   iconSource: any;
   onPress: ((event: GestureResponderEvent) => void) | undefined;
   text: string;
-  selected: boolean;
+  viewStyle: any;
+  iconStyle: any;
+  textStyle: any;
 };
 
 const PressableIconTextBox = ({
   iconSource,
   onPress,
   text,
-  selected,
+  viewStyle,
+  iconStyle,
+  textStyle,
 }: IconTextProp) => {
   return (
     <TouchableHighlight onPress={onPress}>
-      <View
-        style={
-          selected
-            ? [
-                styles.viewContainer,
-                styles.leftAlignContainer,
-                styles.iconTextBox,
-                styles.selectedIconTextBox,
-              ]
-            : [
-                styles.viewContainer,
-                styles.leftAlignContainer,
-                styles.iconTextBox,
-              ]
-        }>
-        <Image
-          style={(styles.image, styles.iconTextBoxImage)}
-          source={iconSource}
-        />
-        <Text style={styles.heading}>{text}</Text>
+      <View style={viewStyle}>
+        <Image style={iconStyle} source={iconSource} />
+        <Text style={textStyle}>{text}</Text>
       </View>
     </TouchableHighlight>
   );

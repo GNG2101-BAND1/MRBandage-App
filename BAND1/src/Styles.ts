@@ -169,6 +169,12 @@ const styles = StyleSheet.create({
   },
 
   heading: {
+    color: colours.brandDarkRed,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
+  deviceTitle: {
     color: colours.textDarkBlue,
     fontSize: 15,
     fontWeight: 'bold',

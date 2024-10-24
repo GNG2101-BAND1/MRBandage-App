@@ -60,7 +60,22 @@ const DisplayBoxContent = ({
                   console.log(device + ' selected');
                   setSelectedDevice(device);
                 }}
-                selected={selectedDevice === device}
+                viewStyle={
+                  selectedDevice === device
+                    ? [
+                        styles.viewContainer,
+                        styles.leftAlignContainer,
+                        styles.iconTextBox,
+                        styles.selectedIconTextBox,
+                      ]
+                    : [
+                        styles.viewContainer,
+                        styles.leftAlignContainer,
+                        styles.iconTextBox,
+                      ]
+                }
+                iconStyle={(styles.image, styles.iconTextBoxImage)}
+                textStyle={styles.deviceTitle}
               />
             );
           })}
