@@ -3,7 +3,7 @@ import PressableIconTextBox from "./PressableIconTextBox";
 
 type DeviceProps = {
     deviceName: string,
-    iconSource: string,
+    iconSource: any,
 }
 
 const DeviceBox = ({deviceName, iconSource}: DeviceProps) => {

@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, Text, View } from "react-native";
 import styles from "../Styles";
+import { images } from "../Values";
 
 type LogoProps = {
     name: string;
@@ -10,7 +11,7 @@ type LogoProps = {
 const BigLogo = ({name, slogan}: LogoProps) => {
     return <View style={styles.bigLogo}>
         <Image 
-            source={require("../assets/logo.png")}
+            source={images.logo}
             alt="Smart Bandage Logo"
         />
         <View>

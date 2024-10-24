@@ -3,16 +3,16 @@ import { GestureResponderEvent, Image, Text, TouchableHighlight, View } from "re
 import styles from "../Styles";
 
 type IconTextProp = {
-    iconSource: string,
+    iconSource: any,
     onPress: ((event: GestureResponderEvent) => void) | undefined,
     text: string,
 }
 
 const PressableIconTextBox = ({iconSource, onPress, text}: IconTextProp) => {
     return <TouchableHighlight onPress={onPress}>
-            <View style={styles.iconViewContainer}>
-                <Image source={require(iconSource)} />
-                <Text style={styles.text}>{text}</Text>
+            <View style={[styles.viewContainer, styles.leftAlignContainer]}>
+                <Image style={styles.image} source={iconSource} />
+                <Text style={styles.heading}>{text}</Text>
             </View>
         </TouchableHighlight>
 }
