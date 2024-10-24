@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    padding: "5%",
+    padding: '5%',
   },
 
   progressBar: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '80%',
     maxHeight: '50%',
-    minHeight: "45%",
+    minHeight: '45%',
   },
 
   displayBox: {
@@ -70,6 +70,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  iconTextBox: {
+    padding: 10,
+    marginTop: 10,
+  },
+  selectedIconTextBox: {
+    borderWidth: 1,
+  },
+
   text: {
     color: colours.textDarkBlue,
     fontSize: 15,
@@ -88,6 +96,13 @@ const styles = StyleSheet.create({
     height: 30,
     marginLeft: 10,
   },
+
+  iconTextBoxImage: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+
   loadingGIF: {
     width: 60,
     height: 60,
@@ -129,8 +144,8 @@ const styles = StyleSheet.create({
 
   sectionContainer: {
     flex: 1,
-    maxHeight: "25%",
-    width: "100%",
+    maxHeight: '25%',
+    width: '100%',
     margin: 10,
   },
 
@@ -156,9 +171,15 @@ const styles = StyleSheet.create({
   heading: {
     color: colours.brandDarkRed,
     fontSize: 20,
+    fontWeight: 'bold',
     textAlign: 'left',
   },
-
+  deviceTitle: {
+    color: colours.textDarkBlue,
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
 });
 
 export default styles;
