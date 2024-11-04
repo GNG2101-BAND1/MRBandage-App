@@ -27,7 +27,6 @@ const DisplayBoxContent = ({
   setSelectedDevice,
   setButtonText,
 }: DisplayBoxContentProps) => {
-  //   const [selectedDevice, setSelectedDevice] = useState('');
   switch (stepNumber) {
     case 1:
       return (
@@ -244,7 +243,12 @@ const ConnectScreen = ({navigation}: any) => {
           <Button title={buttonText} onPress={initiateConnection} />
         )}
         {stepNumber > 1 && stepNumber !== 3 ? (
-          <Button title="Back" onPress={previousStep} />
+          <Button
+            title="Back"
+            onPress={previousStep}
+            buttonStyle={styles.backBtn}
+            buttonTextStyle={styles.backBtnText}
+          />
         ) : null}
 
         <View style={styles.horizontalSameLine}>

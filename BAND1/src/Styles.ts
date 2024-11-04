@@ -180,6 +180,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
   },
+
+  backBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  backBtnText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colours.brandDarkRed,
+    textDecorationLine: 'underline',
+  },
 });
 
 export default styles;
