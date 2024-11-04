@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Linking, Text, View, Image} from 'react-native';
+import {Linking, Text, View, Image, Alert} from 'react-native';
 import styles from '../Styles';
 import BigLogo from '../components/BigLogo';
 import ProgressBar from '../components/ProgressBar';
@@ -16,6 +16,7 @@ type DisplayBoxContentProps = {
   deviceList: string[] | null;
   selectedDevice: string;
   setSelectedDevice: any;
+  setButtonText: any;
 };
 
 // temporary brute force rendering of box content change
@@ -24,6 +25,7 @@ const DisplayBoxContent = ({
   deviceList = null,
   selectedDevice,
   setSelectedDevice,
+  setButtonText,
 }: DisplayBoxContentProps) => {
   //   const [selectedDevice, setSelectedDevice] = useState('');
   switch (stepNumber) {
@@ -40,8 +42,6 @@ const DisplayBoxContent = ({
         </View>
       );
     case 2:
-    // fall through to 3
-    case 3:
       return (
         <>
           <Text style={styles.text}>
@@ -59,6 +59,7 @@ const DisplayBoxContent = ({
                 onSelect={device => {
                   console.log(device + ' selected');
                   setSelectedDevice(device);
+                  setButtonText('Connect Device');
                 }}
                 viewStyle={
                   selectedDevice === device
@@ -81,9 +82,19 @@ const DisplayBoxContent = ({
           })}
         </>
       );
+    case 3:
+      return (
+        <View>
+          <Text style={styles.text}>Connecting to {selectedDevice}...</Text>
+          <Image
+            style={styles.loadingGIF}
+            source={{
+              uri: 'https://global.discourse-cdn.com/sitepoint/original/3X/e/3/e352b26bbfa8b233050087d6cb32667da3ff809c.gif',
+            }}
+          />
+        </View>
+      );
     case 4:
-    // fall through to 5
-    case 5:
       return (
         <View>
           <Text style={styles.text}>
@@ -128,6 +139,7 @@ const ConnectScreen = ({navigation}: any) => {
 
   const [deviceList, setDeviceList] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
@@ -136,18 +148,70 @@ const ConnectScreen = ({navigation}: any) => {
     };
   }, []);
 
-  // Mock connection function to simulate device connection
-  const mockConnection = async () => {
-    setStepNumber(1); // Start loading
+  const mockSearch = async () => {
+    setIsLoading(true);
+    setStepNumber(1);
     const timeoutId = setTimeout(() => {
-      setStepNumber(prevStep => prevStep + 1);
-      setButtonText('Select Device');
+      setIsLoading(false);
+      nextStep();
+      setButtonText(selectedDevice ? 'Connect Device' : 'Select Device');
       setDeviceList(['Arduino cu.usbmodem13401', 'Arduino cu.usbmodem92012']);
+    }, DEBUGGING_MOCK_LOAD_TIME);
+
+    return () => clearTimeout(timeoutId);
+  };
+
+  const mockConnection = async () => {
+    setIsLoading(true);
+    setStepNumber(3);
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+      nextStep();
       console.log(stepNumber + 1);
     }, DEBUGGING_MOCK_LOAD_TIME);
 
-    // Clean up timeout when component unmounts
     return () => clearTimeout(timeoutId);
+  };
+
+  const nextStep = () => {
+    if (stepNumber < numberOfSteps) {
+      stepNumber === 4 ? setButtonText('Continue') : null;
+      setStepNumber(prev => prev + 1);
+      console.log(stepNumber + 1);
+      setButtonText(stepNumber === 2 ? 'Continue' : 'Connect Device');
+    } else {
+      navigation.navigate('Result');
+    }
+  };
+
+  const previousStep = () => {
+    switch (stepNumber) {
+      case 2:
+        setStepNumber(0);
+        break;
+      case 4:
+        setStepNumber(2);
+        setSelectedDevice('');
+        setButtonText('Select Device');
+        break;
+    }
+  };
+
+  const initiateConnection = () => {
+    if (stepNumber === 0) {
+      console.log('Mocking device search');
+      mockSearch();
+    } else if (stepNumber === 2) {
+      if (selectedDevice === '') {
+        console.log('Please select a device');
+        Alert.alert('No device selected', 'Please select a device');
+        return;
+      }
+      console.log('Mocking connection');
+      mockConnection();
+    } else {
+      nextStep();
+    }
   };
 
   return (
@@ -155,12 +219,13 @@ const ConnectScreen = ({navigation}: any) => {
       <BigLogo name="SmartBandaid" slogan="Detect your infections early" />
 
       {/* add code to show display box here */}
-      <DisplayBox visible={stepNumber > 0}>
+      <DisplayBox visible={stepNumber > 0 || isLoading}>
         <DisplayBoxContent
           stepNumber={stepNumber}
           deviceList={deviceList}
           selectedDevice={selectedDevice}
           setSelectedDevice={setSelectedDevice}
+          setButtonText={setButtonText}
         />
       </DisplayBox>
 
@@ -172,38 +237,15 @@ const ConnectScreen = ({navigation}: any) => {
         ]}>
         <ProgressBar
           numberOfPages={numberOfSteps}
-          activePage={Math.floor(stepNumber / 2)}
+          activePage={Math.round(stepNumber / 2.5)}
         />
-        {stepNumber === 1 ? null : (
-          <Button
-            title={buttonText}
-            onPress={() => {
-              if (!(stepNumber === 5)) {
-                switch (stepNumber + 1) {
-                  case 3:
-                    if (selectedDevice === '') {
-                      console.log('Please select a device');
-                      return;
-                    }
-                    setButtonText('Connect Device');
-                    setDeviceList([selectedDevice]);
-                    break;
-                  case 4:
-                    setButtonText('Continue');
-                    break;
-                }
-                if (stepNumber === 0) {
-                  mockConnection(); // Start the connection simulation
-                } else {
-                  setStepNumber(prevStep => prevStep + 1); // Increment step if not connecting
-                  console.log(stepNumber + 1);
-                }
-              } else {
-                navigation.navigate('Result');
-              }
-            }}
-          />
+
+        {stepNumber === 1 || stepNumber === 3 ? null : (
+          <Button title={buttonText} onPress={initiateConnection} />
         )}
+        {stepNumber > 1 && stepNumber !== 3 ? (
+          <Button title="Back" onPress={previousStep} />
+        ) : null}
 
         <View style={styles.horizontalSameLine}>
           <Text style={styles.caption}>Have a problem? See our </Text>
