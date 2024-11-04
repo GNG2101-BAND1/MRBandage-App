@@ -6,7 +6,6 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
-import styles from '../Styles';
 
 type IconTextProp = {
   iconSource: any;
@@ -26,7 +25,10 @@ const PressableIconTextBox = ({
   textStyle,
 }: IconTextProp) => {
   return (
-    <TouchableHighlight onPress={onPress}>
+    <TouchableHighlight
+      activeOpacity={0.6}
+      underlayColor="white"
+      onPress={onPress}>
       <View style={viewStyle}>
         <Image style={iconStyle} source={iconSource} />
         <Text style={textStyle}>{text}</Text>

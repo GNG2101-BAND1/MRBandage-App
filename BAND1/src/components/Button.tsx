@@ -5,8 +5,8 @@ import styles from '../Styles';
 type ButtonProps = {
   onPress: null | ((event: GestureResponderEvent) => void) | undefined;
   title: String;
-  buttonStyle: object;
-  buttonTextStyle: object;
+  buttonStyle?: object;
+  buttonTextStyle?: object;
 };
 
 const Button = ({

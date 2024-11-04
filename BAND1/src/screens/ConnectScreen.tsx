@@ -7,7 +7,7 @@ import Button from '../components/Button';
 import DisplayBox from '../components/DisplayBox';
 import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
 import PressableIcon from '../components/PressableIcon';
-import {images} from '../Values';
+import {colours, images} from '../Values';
 import ColouredCircle from '../components/ColouredCircle';
 import DeviceBox from '../components/DeviceBox';
 
@@ -31,7 +31,7 @@ const DisplayBoxContent = ({
     case 1:
       return (
         <View>
-          <Text style={styles.text}>Searching for device...</Text>
+          <Text style={styles.deviceListTitle}>Searching for device...</Text>
           <Image
             style={styles.loadingGIF}
             source={{
@@ -43,8 +43,8 @@ const DisplayBoxContent = ({
     case 2:
       return (
         <>
-          <Text style={styles.text}>
-            {!deviceList ? 'Devices Found:' : 'No devices were found...'}
+          <Text style={styles.deviceListTitle}>
+            {deviceList ? 'Devices Found:' : 'No devices were found...'}
           </Text>
 
           {deviceList?.map(device => {
@@ -53,7 +53,7 @@ const DisplayBoxContent = ({
                 key={device}
                 deviceName={device}
                 iconSource={{
-                  uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Arduino_Uno_-_R3.jpg/440px-Arduino_Uno_-_R3.jpg',
+                  uri: 'https://pngimg.com/d/wifi_PNG62360.png',
                 }}
                 onSelect={device => {
                   console.log(device + ' selected');
@@ -84,7 +84,9 @@ const DisplayBoxContent = ({
     case 3:
       return (
         <View>
-          <Text style={styles.text}>Connecting to {selectedDevice}...</Text>
+          <Text style={styles.deviceListTitle}>
+            Connecting to {selectedDevice}...
+          </Text>
           <Image
             style={styles.loadingGIF}
             source={{
@@ -95,11 +97,13 @@ const DisplayBoxContent = ({
       );
     case 4:
       return (
-        <View>
-          <Text style={styles.text}>
+        <View style={{padding: 10}}>
+          <Text style={{marginBottom: 10, ...styles.boldText}}>
             Please indicate the current colour of pH
           </Text>
-          <HorizontalTextIconRow text="Current pH color:">
+          <HorizontalTextIconRow
+            textStyle={styles.boldText}
+            text="Current pH color:">
             <PressableIcon
               onPress={() => {
                 console.log('iconPressed');
@@ -115,8 +119,12 @@ const DisplayBoxContent = ({
               </View>
             </PressableIcon>
           </HorizontalTextIconRow>
-          <Text style={styles.text}>OR</Text>
-          <HorizontalTextIconRow text={'Take a picture\nof the pH color:'}>
+          <Text style={{...styles.text, margin: 10, textAlign: 'center'}}>
+            OR
+          </Text>
+          <HorizontalTextIconRow
+            textStyle={styles.boldText}
+            text={'Take a picture\nof the pH color:'}>
             <PressableIcon
               onPress={() => {
                 console.log('iconPressed');
