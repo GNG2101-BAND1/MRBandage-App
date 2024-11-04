@@ -195,6 +195,7 @@ const ConnectScreen = ({navigation}: any) => {
     switch (stepNumber) {
       case 2:
         setStepNumber(0);
+        setSelectedDevice('');
         break;
       case 4:
         setStepNumber(2);
