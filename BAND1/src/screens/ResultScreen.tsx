@@ -46,7 +46,7 @@ const ResultScreen = ({navigation}: any) => {
   return (
     <View style={styles.screen}>
       <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
-        <SmallLogo name={'MR\nBandage'} />
+        <SmallLogo name={'Mr.\nBandage'} />
 
         <View
           style={[
