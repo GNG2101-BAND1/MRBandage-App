@@ -224,7 +224,7 @@ const ConnectScreen = ({navigation}: any) => {
 
   return (
     <View style={styles.screen}>
-      <BigLogo name="SmartBandaid" slogan="Detect your infections early" />
+      <BigLogo name="MRBandage" slogan="Detect your infections early" />
 
       {/* add code to show display box here */}
       <DisplayBox visible={stepNumber > 0 || isLoading}>
