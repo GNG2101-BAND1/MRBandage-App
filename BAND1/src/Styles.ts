@@ -29,17 +29,19 @@ const styles = StyleSheet.create({
   },
 
   appName: {
-    margin: 10,
+    marginTop: 10,
     fontSize: 36,
     color: colours.brandDarkRed,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
 
   appSlogan: {
-    margin: 5,
+    marginBottom: 10,
     fontSize: 15,
     color: colours.brandLightOrange,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
 
   bigLogo: {
@@ -81,6 +83,18 @@ const styles = StyleSheet.create({
   text: {
     color: colours.textDarkBlue,
     fontSize: 15,
+  },
+  deviceListTitle: {
+    color: colours.textDarkBlue,
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+
+  boldText: {
+    color: colours.textDarkBlue,
+    fontSize: 15,
+    fontWeight: 'bold',
   },
 
   iconViewContainer: {
@@ -134,7 +148,8 @@ const styles = StyleSheet.create({
 
   caption: {
     color: colours.brandDarkRed,
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 
   horizontalSameLine: {
@@ -179,6 +194,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'left',
+  },
+
+  backBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  backBtnText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colours.brandDarkRed,
+    textDecorationLine: 'underline',
+  },
+
+  margin10: {
+    margin: 10,
   },
 });
 
