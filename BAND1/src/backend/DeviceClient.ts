@@ -47,7 +47,10 @@ class DeviceClient {
 }
 
 // test
-let client = new DeviceClient(5555, '192.168.4.2');
+const PORT = 5555;  // this should match the port number on the ESP
+const ADDRESS = '';  // this should match the localIP of the ESP
+
+let client = new DeviceClient(PORT, ADDRESS);
 client.connect();
 client.send("hello from client")
 // client.close();
