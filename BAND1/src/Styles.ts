@@ -68,8 +68,12 @@ const styles = StyleSheet.create({
   viewContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  resultTitleView: {
+    marginLeft: 20,
+    marginBottom: 10,
+    alignSelf: 'flex-start',
   },
 
   iconTextBox: {
@@ -158,12 +162,13 @@ const styles = StyleSheet.create({
   },
 
   sectionContainer: {
+    display: 'flex',
+    flexDirection: 'column',
     flex: 1,
     maxHeight: '25%',
     width: '100%',
     margin: 10,
   },
-
   bottomAlignContainer: {
     flexDirection: 'column',
     justifyContent: 'flex-end',
@@ -180,7 +185,7 @@ const styles = StyleSheet.create({
   },
 
   leftAlignContainer: {
-    justifyContent: 'flex-start',
+    alignSelf: 'flex-start',
   },
 
   heading: {
@@ -208,8 +213,23 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 
-  margin10: {
-    margin: 10,
+  resultMessage: {
+    color: colours.textDarkBlue,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  temperatureContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-evenly',
+  },
+
+  avgTemp: {
+    display: 'flex',
+    flexDirection: 'column',
   },
 });
 
