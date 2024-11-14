@@ -8,7 +8,7 @@ type DeviceProps = {
   viewStyle: any;
   iconStyle: any;
   textStyle: any;
-  activeOpacity: number;
+  activeOpacity?: number;
 };
 
 const DeviceBox = ({
