@@ -8,6 +8,7 @@ type DeviceProps = {
   viewStyle: any;
   iconStyle: any;
   textStyle: any;
+  activeOpacity: number;
 };
 
 const DeviceBox = ({
@@ -17,9 +18,11 @@ const DeviceBox = ({
   viewStyle,
   iconStyle,
   textStyle,
+  activeOpacity,
 }: DeviceProps) => {
   return (
     <PressableIconTextBox
+      activeOpacity={activeOpacity}
       text={deviceName}
       iconSource={iconSource}
       onPress={() => {
@@ -31,9 +34,5 @@ const DeviceBox = ({
     />
   );
 };
-
-// function selectDevice(deviceName: string) {
-//     // add logic to handle device being selected here
-// }
 
 export default DeviceBox;
