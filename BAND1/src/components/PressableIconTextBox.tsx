@@ -14,6 +14,7 @@ type IconTextProp = {
   viewStyle: any;
   iconStyle: any;
   textStyle: any;
+  activeOpacity: number;
 };
 
 const PressableIconTextBox = ({
@@ -23,10 +24,11 @@ const PressableIconTextBox = ({
   viewStyle,
   iconStyle,
   textStyle,
+  activeOpacity = 0.6,
 }: IconTextProp) => {
   return (
     <TouchableHighlight
-      activeOpacity={0.6}
+      activeOpacity={activeOpacity}
       underlayColor="white"
       onPress={onPress}>
       <View style={viewStyle}>
