@@ -10,6 +10,9 @@ import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
 import ColouredCircle from '../components/ColouredCircle';
 import {Image as SvgImage} from 'react-native-svg';
 import PressableIcon from '../components/PressableIcon';
+import UserData from '../backend/UserData';
+import DeviceClient from '../backend/DeviceClient';
+// import { useRoute } from '@react-navigation/native';
 
 type SectionProps = PropsWithChildren<{
   iconSource: any;
@@ -41,6 +44,26 @@ const InfoBox = ({message}: MessageProps) => {
 };
 
 const ResultScreen = ({navigation}: any) => {
+  // const route = useRoute();
+
+  const PORT = 12345;  // this should match the port number on the ESP
+  const ADDRESS = '10.0.2.2';  // this should match the localIP of the ESP
+
+  const client = new DeviceClient(PORT, ADDRESS);
+
+  if (!client.connected()) {
+    client.connect();
+  }
+
+  client.send('ping');
+
+  const initialTemp = 27;  // temporary hard coding temperature
+  const User = new UserData(initialTemp);
+
+  const [avgTemp, setAvgTemp] = useState(0);
+
+  User.on(User.avgTempChange, (temp: number) => {setAvgTemp(temp)});
+
   const [message, setMessage] = useState('Device Connected');
 
   return (
@@ -65,7 +88,7 @@ const ResultScreen = ({navigation}: any) => {
       <ResultSection
         iconSource={images.icons.thermometer}
         sectionTitle="Temperature">
-        <Text style={styles.text}>{'Average: --\u2103'}</Text>
+        <Text style={styles.text}>{'Average: ' + avgTemp + '\u2103'}</Text>
         <Text style={styles.text}>{'High: --\u2103'}</Text>
         <Text style={styles.text}>{'Low: --\u2103'}</Text>
       </ResultSection>

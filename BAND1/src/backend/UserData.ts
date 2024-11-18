@@ -1,9 +1,16 @@
-import { EventEmitter } from 'node:events';
+import EventEmitter from 'events';
 
 const THRESHOLD_TEMPERATURE_CHANGE = 2;
 const THRESHOLD_PH = -1;  // temporary value needs to be changed
 
 class UserData extends EventEmitter {
+
+    public avgTempChange: string = 'avgTempChange';
+    public minTempChange: string = 'minTempChange';
+    public maxTempChange: string = 'maxTempChange';
+    public highTemp: string = 'highTemp';
+    public highPH: string = 'highPH';
+
     private initialTemp: number;
     private averageTemp: number;
     private minTemp: number;
@@ -41,21 +48,21 @@ class UserData extends EventEmitter {
 
         if (newAverage != this.averageTemp) {
             this.averageTemp = newAverage;
-            this.emit('avgTempChange', this.averageTemp);
+            this.emit(this.avgTempChange, this.averageTemp);
         }
 
         if (temp < this.minTemp) {
             this.minTemp = temp;
-            this.emit('minTempChange', this.minTemp);
+            this.emit(this.minTempChange, this.minTemp);
         }
 
         if (temp > this.maxTemp) {
             this.maxTemp = temp;
-            this.emit('maxTempChange', this.maxTemp);
+            this.emit(this.maxTempChange, this.maxTemp);
         }
 
         if ((temp - this.initialTemp) > THRESHOLD_TEMPERATURE_CHANGE) {
-            this.emit('highTemp');
+            this.emit(this.highTemp);
         }
     }
 
@@ -68,7 +75,7 @@ class UserData extends EventEmitter {
         this.currentpH = pH;
 
         if (this.pHValueFromColour(pH) > THRESHOLD_PH) {
-            this.emit('highPH')
+            this.emit(this.highPH);
         }
     }
 
