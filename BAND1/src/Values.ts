@@ -5,6 +5,7 @@ const colours = {
   brandLightOrange: '#fb7f79',
   textDarkBlue: '#161d6f',
   bgColour: '#fff7ea',
+  brandPalePurple: '#939cff',
 };
 
 const values = {

@@ -13,6 +13,7 @@ import PressableIcon from '../components/PressableIcon';
 import UserData from '../backend/UserData';
 import DeviceClient from '../backend/DeviceClient';
 // import { useRoute } from '@react-navigation/native';
+import {colours} from '../Values';
 
 type SectionProps = PropsWithChildren<{
   iconSource: any;
@@ -25,16 +26,27 @@ type MessageProps = {
 
 const ResultSection = ({children, iconSource, sectionTitle}: SectionProps) => {
   return (
-    <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
+    <View style={[styles.sectionContainer]}>
       <PressableIconTextBox
         iconSource={iconSource}
         text={sectionTitle}
         onPress={undefined}
-        viewStyle={[styles.viewContainer, styles.leftAlignContainer]}
+        viewStyle={{
+          ...styles.viewContainer,
+          ...styles.resultTitleView,
+        }}
         iconStyle={styles.image}
         textStyle={styles.heading}
       />
-      <DisplayBox visible={true}>{children}</DisplayBox>
+      <DisplayBox
+        visible={true}
+        viewStyle={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'center',
+        }}>
+        {children}
+      </DisplayBox>
     </View>
   );
 };
@@ -83,27 +95,39 @@ const ResultScreen = ({navigation}: any) => {
       </View>
 
       <ResultSection iconSource={images.icons.heart} sectionTitle="Result">
-        <Text style={styles.text}>Calculating...</Text>
+        <Text style={styles.resultMessage}>Calculating...</Text>
       </ResultSection>
       <ResultSection
         iconSource={images.icons.thermometer}
         sectionTitle="Temperature">
-        <Text style={styles.text}>{'Average: ' + avgTemp + '\u2103'}</Text>
-        <Text style={styles.text}>{'High: --\u2103'}</Text>
-        <Text style={styles.text}>{'Low: --\u2103'}</Text>
+        <View style={styles.temperatureContent}>
+          <View style={styles.avgTemp}>
+            <Text style={{...styles.boldText, fontSize: 40}}>{avgTemp + '\u2103'}</Text>
+            <Text
+              style={{
+                ...styles.boldText,
+                color: colours.brandPalePurple,
+                textAlign: 'center',
+              }}>
+              Average
+            </Text>
+          </View>
+          <View styles={styles.hlTemp}>
+            <Text style={styles.boldText}>{'H:  --\u2103'}</Text>
+            <View
+              style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+              }}
+            />
+            <Text style={styles.boldText}>{'L:  --\u2103'}</Text>
+          </View>
+        </View>
       </ResultSection>
       <ResultSection iconSource={images.icons.drop} sectionTitle="pH Level">
-        <HorizontalTextIconRow text="Initial pH color:">
-          <PressableIcon
-            onPress={() => {
-              console.log('icon clicked');
-            }}>
-            <View style={styles.image}>
-              <ColouredCircle colour="green" />
-            </View>
-          </PressableIcon>
-        </HorizontalTextIconRow>
-        <HorizontalTextIconRow text="Current pH color:">
+        <HorizontalTextIconRow
+          textStyle={styles.boldText}
+          text="Current pH color:">
           <PressableIcon
             onPress={() => {
               console.log('icon clicked');

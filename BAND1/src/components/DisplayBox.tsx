@@ -4,14 +4,15 @@ import type {PropsWithChildren} from 'react';
 import styles from '../Styles';
 
 type DisplayBoxProp = PropsWithChildren<{
-  visible: boolean,
+  visible: boolean;
+  viewStyle?: any;
 }>;
 
-const DisplayBox = ({children, visible}: DisplayBoxProp) => {
+const DisplayBox = ({children, visible, viewStyle = {}}: DisplayBoxProp) => {
   if (visible) {
-    return <View style={styles.displayBox}>{children}</View>;
+    return <View style={{...styles.displayBox, ...viewStyle}}>{children}</View>;
   } else {
-    return <></>
+    return <></>;
   }
 };
 

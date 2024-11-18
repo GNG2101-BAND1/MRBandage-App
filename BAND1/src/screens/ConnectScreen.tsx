@@ -76,6 +76,7 @@ const DisplayBoxContent = ({
                 }
                 iconStyle={(styles.image, styles.iconTextBoxImage)}
                 textStyle={styles.deviceTitle}
+                activeOpacity={0.6}
               />
             );
           })}
@@ -99,39 +100,27 @@ const DisplayBoxContent = ({
       return (
         <View style={{padding: 10}}>
           <Text style={{marginBottom: 10, ...styles.boldText}}>
-            Please indicate the current colour of pH
+            Connected Device:
           </Text>
-          <HorizontalTextIconRow
-            textStyle={styles.boldText}
-            text="Current pH color:">
-            <PressableIcon
-              onPress={() => {
-                console.log('iconPressed');
-              }}>
-              <Image style={styles.image} source={images.icons.arrow} />
-            </PressableIcon>
-            <PressableIcon
-              onPress={() => {
-                console.log('iconPressed');
-              }}>
-              <View style={styles.image}>
-                <ColouredCircle colour="green" />
-              </View>
-            </PressableIcon>
-          </HorizontalTextIconRow>
-          <Text style={{...styles.text, margin: 10, textAlign: 'center'}}>
-            OR
-          </Text>
-          <HorizontalTextIconRow
-            textStyle={styles.boldText}
-            text={'Take a picture\nof the pH color:'}>
-            <PressableIcon
-              onPress={() => {
-                console.log('iconPressed');
-              }}>
-              <Image style={styles.image} source={images.icons.camera} />
-            </PressableIcon>
-          </HorizontalTextIconRow>
+          <DeviceBox
+            key={selectedDevice}
+            deviceName={selectedDevice}
+            iconSource={{
+              uri: 'https://pngimg.com/d/wifi_PNG62360.png',
+            }}
+            onSelect={() => {
+              console.log('Clicked');
+            }}
+            viewStyle={[
+              styles.viewContainer,
+              styles.leftAlignContainer,
+              styles.iconTextBox,
+              // styles.selectedIconTextBox,
+            ]}
+            iconStyle={(styles.image, styles.iconTextBoxImage)}
+            textStyle={styles.deviceTitle}
+            activeOpacity={1}
+          />
         </View>
       );
   }
@@ -196,6 +185,7 @@ const ConnectScreen = ({navigation}: any) => {
       case 2:
         setStepNumber(0);
         setSelectedDevice('');
+        setButtonText('Connect Device');
         break;
       case 4:
         setStepNumber(2);
