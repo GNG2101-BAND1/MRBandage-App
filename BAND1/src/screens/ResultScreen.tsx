@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useState} from 'react';
+import React, {PropsWithChildren, useEffect, useState} from 'react';
 import {Text, View, Image} from 'react-native';
 import styles from '../Styles';
 import SmallLogo from '../components/SmallLogo';
@@ -11,7 +11,6 @@ import ColouredCircle from '../components/ColouredCircle';
 import {Image as SvgImage} from 'react-native-svg';
 import PressableIcon from '../components/PressableIcon';
 import UserData from '../backend/UserData';
-import DeviceClient from '../backend/DeviceClient';
 // import { useRoute } from '@react-navigation/native';
 import {colours} from '../Values';
 
@@ -56,27 +55,21 @@ const InfoBox = ({message}: MessageProps) => {
 };
 
 const ResultScreen = ({navigation}: any) => {
-  // const route = useRoute();
 
-  const PORT = 12345;  // this should match the port number on the ESP
-  const ADDRESS = '10.0.2.2';  // this should match the localIP of the ESP
-
-  const client = new DeviceClient(PORT, ADDRESS);
-
-  if (!client.connected()) {
-    client.connect();
-  }
-
-  client.send('ping');
-
-  const initialTemp = 27;  // temporary hard coding temperature
-  const User = new UserData(initialTemp);
-
-  const [avgTemp, setAvgTemp] = useState(0);
-
-  User.on(User.avgTempChange, (temp: number) => {setAvgTemp(temp)});
-
+  const [avgTemp, setAvgTemp] = useState(NaN);
+  const [lowTemp, setLowTemp] = useState(NaN);
+  const [highTemp, setHighTemp] = useState(NaN);
   const [message, setMessage] = useState('Device Connected');
+  const [result, setResult] = useState("Calculating...");
+
+  useEffect(() => {
+    const initialTemp = 27;  // temporary hard coding temperature
+    const User = new UserData(initialTemp);
+
+    User.on(User.avgTempChange, setAvgTemp);
+    User.on(User.maxTempChange, setHighTemp);
+    User.on(User.minTempChange, setLowTemp);
+  })
 
   return (
     <View style={styles.screen}>
@@ -95,7 +88,7 @@ const ResultScreen = ({navigation}: any) => {
       </View>
 
       <ResultSection iconSource={images.icons.heart} sectionTitle="Result">
-        <Text style={styles.resultMessage}>Calculating...</Text>
+        <Text style={styles.resultMessage}>{result}</Text>
       </ResultSection>
       <ResultSection
         iconSource={images.icons.thermometer}
@@ -113,14 +106,14 @@ const ResultScreen = ({navigation}: any) => {
             </Text>
           </View>
           <View styles={styles.hlTemp}>
-            <Text style={styles.boldText}>{'H:  --\u2103'}</Text>
+            <Text style={styles.boldText}>{'H:  ' + highTemp + '\u2103'}</Text>
             <View
               style={{
                 borderBottomColor: 'black',
                 borderBottomWidth: 1,
               }}
             />
-            <Text style={styles.boldText}>{'L:  --\u2103'}</Text>
+            <Text style={styles.boldText}>{'L:  ' + lowTemp + '--\u2103'}</Text>
           </View>
         </View>
       </ResultSection>
