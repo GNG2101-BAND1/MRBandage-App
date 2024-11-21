@@ -10,6 +10,7 @@ import PressableIcon from '../components/PressableIcon';
 import {colours, images} from '../Values';
 import ColouredCircle from '../components/ColouredCircle';
 import DeviceBox from '../components/DeviceBox';
+import { startScan } from '../backend/BluetoothManager';
 
 type DisplayBoxContentProps = {
   stepNumber: number;
@@ -157,6 +158,18 @@ const ConnectScreen = ({navigation}: any) => {
     return () => clearTimeout(timeoutId);
   };
 
+  const search = () => {
+    startScan(() => {
+      setIsLoading(true);
+      setStepNumber(1);
+    }, devices => {
+      setIsLoading(false);
+      nextStep();
+      setButtonText(selectedDevice ? 'Connect Device' : 'Select Device');
+      setDeviceList(Array.prototype.map(peripheral => peripheral.name, devices.values()));
+    })
+  }
+
   const mockConnection = async () => {
     setIsLoading(true);
     setStepNumber(3);
@@ -197,8 +210,9 @@ const ConnectScreen = ({navigation}: any) => {
 
   const initiateConnection = () => {
     if (stepNumber === 0) {
-      console.log('Mocking device search');
-      mockSearch();
+      // console.log('Mocking device search');
+      // mockSearch();
+      search();
     } else if (stepNumber === 2) {
       if (selectedDevice === '') {
         console.log('Please select a device');

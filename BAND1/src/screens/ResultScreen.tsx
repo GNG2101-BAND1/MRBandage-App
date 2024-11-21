@@ -105,7 +105,7 @@ const ResultScreen = ({navigation}: any) => {
               Average
             </Text>
           </View>
-          <View styles={styles.hlTemp}>
+          <View>
             <Text style={styles.boldText}>{'H:  ' + highTemp + '\u2103'}</Text>
             <View
               style={{
