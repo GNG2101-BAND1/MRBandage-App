@@ -194,7 +194,10 @@ const ResultScreen = ({navigation}: any) => {
           <View style={styles.modalContent}>
             <PHColorPicker
               phValue={phValue}
-              setPhValue={setPhValue}
+              setPhValue={(value) => {
+                setPhValue(value);
+                User.updatePH(value);
+              }}
               getColour={getColour}></PHColorPicker>
 
             <TouchableOpacity
