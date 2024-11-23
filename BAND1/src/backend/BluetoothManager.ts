@@ -2,6 +2,7 @@ import BleManager, {Peripheral, PeripheralInfo} from 'react-native-ble-manager';
 import { checkMultiple, PERMISSIONS, request, Permission, RESULTS } from 'react-native-permissions';
 import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
 import { Buffer } from 'react-native-buffer';
+import { User } from './UserData';
 
 const requiredPermissions: Permission[] = Platform.OS === "android" ? [PERMISSIONS.ANDROID.BLUETOOTH_CONNECT, PERMISSIONS.ANDROID.BLUETOOTH_SCAN]
     : [PERMISSIONS.IOS.BLUETOOTH];
@@ -19,6 +20,7 @@ const BleEventEmitter = new NativeEventEmitter(NativeModules.BleManager);
 const discoveredDevices: Map<string, any> = new Map();
 
 let connectedDevice: string = '';
+let canStart = false;
 
 const startScan = (onStart: () => void = () => {}, onComplete: (devices: Map<string, any>) => void = () => {}) => {
 
@@ -88,6 +90,48 @@ const handleDisconnection = () => {
     // );
 }
 
+/**
+ * Start recording the next two temperature values sent and calibrate the user object with the average
+ */
+const startCalibration = () => {
+    let prev: number | undefined;
+
+    let listener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
+        ( {value, peripheral, characteristic, service} ) => {
+            const data = Buffer.from(value).readInt16LE(0);
+            console.log(`Received ${data} for characteristic ${characteristic}`);
+
+            if (prev) {
+                User.calibrate((prev + data) / 2);
+                canStart = true;
+                listener.remove();
+            } else {
+                prev = data;
+            }
+        }
+    );
+}
+
+/**
+ * Begin sending data to the user object
+ * 
+ * Start calibration must be called before start can be called.
+ */
+const start = () => {
+    if (!canStart) {
+        throw new Error("Start calibration must be called before start can be called.");
+    }
+
+    BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
+        ( {value, peripheral, characteristic, service} ) => {
+            const data = Buffer.from(value).readInt16LE(0);
+            console.log(`Received ${data} for characteristic ${characteristic}`);
+
+            User.updateTemp(data / 100);
+        }
+    );
+}
+
 BleEventEmitter.addListener('BleManagerDiscoverPeripheral', (peripheral: Peripheral) => {
     if (peripheral.name == DEVICE_NAME) {
         // only add if the discovered device is an MRSensor
@@ -96,13 +140,7 @@ BleEventEmitter.addListener('BleManagerDiscoverPeripheral', (peripheral: Periphe
     }
 });
 
-BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
-    ( {value, peripheral, characteristic, service} ) => {
-        const data = Buffer.from(value);
-        console.log(`Received ${data.readInt16LE(0)} for characteristic ${characteristic}`);
-    }
-)
-
+// need to do more with the permissions if not accepted
 checkMultiple(requiredPermissions).then((statuses) => {
     requiredPermissions.forEach((permission) => {
         if (statuses[permission] === RESULTS.DENIED) {
@@ -113,7 +151,7 @@ checkMultiple(requiredPermissions).then((statuses) => {
             );
         }
     });
-})
+});
 
 BleManager.start({showAlert: true}).then(() => {
     console.log("Module mounted");
@@ -127,6 +165,6 @@ BleManager.enableBluetooth().then(
     () => {
         console.log("Bluetooth refused");
     }
-)
+);
 
 export {startScan, connectDevice, disconnectDevice};
