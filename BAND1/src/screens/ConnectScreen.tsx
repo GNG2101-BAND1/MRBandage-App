@@ -164,6 +164,12 @@ const ConnectScreen = ({navigation}: any) => {
       setIsLoading(false);
       nextStep();
       console.log(stepNumber + 1);
+      Alert.alert('Device Connected', selectedDevice, [
+        {
+          text: 'Continue',
+          onPress: () => console.log('Continue'),
+        },
+      ]);
     }, DEBUGGING_MOCK_LOAD_TIME);
 
     return () => clearTimeout(timeoutId);
