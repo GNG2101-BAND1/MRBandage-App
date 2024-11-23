@@ -8,10 +8,8 @@ import DisplayBox from '../components/DisplayBox';
 import {images} from '../Values';
 import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
 import ColouredCircle from '../components/ColouredCircle';
-import {Image as SvgImage} from 'react-native-svg';
 import PressableIcon from '../components/PressableIcon';
 import {User} from '../backend/UserData';
-// import { useRoute } from '@react-navigation/native';
 import {colours} from '../Values';
 
 type SectionProps = PropsWithChildren<{
@@ -56,21 +54,30 @@ const InfoBox = ({message}: MessageProps) => {
 
 const ResultScreen = ({navigation}: any) => {
 
-  const [avgTemp, setAvgTemp] = useState(NaN);
-  const [lowTemp, setLowTemp] = useState(NaN);
-  const [highTemp, setHighTemp] = useState(NaN);
+  const POSTIVE_MESSAGE = "Elevated pH and temperature levels suggest possible infection.";
+  const NEGATIVE_MESSAGE = "Wound is in good condition. Keep it clean and protected.";
+
+  const [avgTemp, setAvgTemp] = useState(User.getAverageTemp());
+  const [lowTemp, setLowTemp] = useState(User.getMinTemp());
+  const [highTemp, setHighTemp] = useState(User.getMaxTemp());
   const [message, setMessage] = useState('Device Connected');
-  const [result, setResult] = useState("Calculating...");
+  const [result, setResult] = useState(false);
 
   useEffect(() => {
     let avgTempListener = User.addListener(User.avgTempChange, setAvgTemp);
     let maxTempListener = User.addListener(User.maxTempChange, setHighTemp);
     let minTempListener = User.addListener(User.minTempChange, setLowTemp);
+    let infectionStatusListener = User.addListener(User.infectionStatusChange, setResult);
+    let highTempListener = User.addListener(User.highTemp, () => {
+      setMessage("Please Check pH");
+    })
 
     return () => {
       avgTempListener.remove();
       maxTempListener.remove();
       minTempListener.remove();
+      infectionStatusListener.remove();
+      highTempListener.remove();
     }
   })
 
@@ -91,7 +98,10 @@ const ResultScreen = ({navigation}: any) => {
       </View>
 
       <ResultSection iconSource={images.icons.heart} sectionTitle="Result">
-        <Text style={styles.resultMessage}>{result}</Text>
+        <Text style={{...styles.resultHeading, color: result ? colours.brandDarkRed : colours.textDarkBlue}}>
+          {result ? "POSITIVE" : "NEGATIVE"} </Text>
+        <Text style={{...styles.resultMessage, color: result ? colours.brandLightOrange : colours.brandPalePurple}}>
+          {result ? POSTIVE_MESSAGE : NEGATIVE_MESSAGE} </Text>
       </ResultSection>
       <ResultSection
         iconSource={images.icons.thermometer}
@@ -116,7 +126,7 @@ const ResultScreen = ({navigation}: any) => {
                 borderBottomWidth: 1,
               }}
             />
-            <Text style={styles.boldText}>{'L:  ' + lowTemp + '--\u2103'}</Text>
+            <Text style={styles.boldText}>{'L:  ' + lowTemp + '\u2103'}</Text>
           </View>
         </View>
       </ResultSection>

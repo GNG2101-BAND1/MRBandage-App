@@ -8,6 +8,7 @@ import DisplayBox from '../components/DisplayBox';
 import DeviceBox from '../components/DeviceBox';
 import { connectDevice, disconnectDevice, startScan } from '../backend/BluetoothManager';
 import { Peripheral } from 'react-native-ble-manager';
+import { generateTemperatures } from '../backend/MockDataGenerator';
 
 type DisplayBoxContentProps = {
   stepNumber: number;
@@ -219,19 +220,20 @@ const ConnectScreen = ({navigation}: any) => {
 
   const initiateConnection = () => {
     if (stepNumber === 0) {
-      // console.log('Mocking device search');
-      // mockSearch();
-      search();
+      console.log('Mocking device search');
+      mockSearch();
+      // search();
     } else if (stepNumber === 2) {
       if (selectedDevice === null) {
         console.log('Please select a device');
         Alert.alert('No device selected', 'Please select a device');
         return;
       }
-      // console.log('Mocking connection');
-      // mockConnection();
-      console.log("Connecting to " + selectedDevice?.name);
-      connect();
+      console.log('Mocking connection');
+      mockConnection();
+      generateTemperatures();
+      // console.log("Connecting to " + selectedDevice?.name);
+      // connect();
     } else {
       nextStep();
     }
