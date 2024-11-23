@@ -235,6 +235,70 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
   },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  modalContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    width: '100%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    marginBottom: 20,
+    fontWeight: 'bold',
+    color: colours.brandDarkRed,
+  },
+  modalGradient: {
+    width: '80%',
+    borderRadius: 10,
+    marginBottom: 10,
+    height: 50,
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  modalIndicator: {
+    position: 'absolute',
+    top: -5,
+    width: 10,
+    height: 60,
+    borderRadius: 5,
+    backgroundColor: 'white',
+    borderColor: 'white',
+    borderWidth: 2,
+  },
+  modalSlider: {
+    width: '100%',
+  },
+  modalPHValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colours.textDarkBlue,
+  },
+  modalCloseBtn: {
+    backgroundColor: colours.brandDarkRed,
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 30,
+  },
+  modalCloseBtnText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
