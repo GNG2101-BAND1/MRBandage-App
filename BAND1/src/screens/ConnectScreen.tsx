@@ -131,7 +131,7 @@ const ConnectScreen = ({navigation}: any) => {
   const [stepNumber, setStepNumber] = useState(0);
   const [buttonText, setButtonText] = useState('Connect Device');
 
-  const [deviceList, setDeviceList] = useState([]);
+  const [deviceList, setDeviceList] = useState(new Array());
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -163,10 +163,6 @@ const ConnectScreen = ({navigation}: any) => {
       setIsLoading(false);
       nextStep();
       setButtonText(selectedDevice ? 'Connect Device' : 'Select Device');
-      // let newList: string[] = new Array();
-      // devices.forEach((device, deviceId, deviceMap) => {
-      //   newList.push(device.name);
-      // })
       setDeviceList(Array.from(devices.values()));
     })
   };

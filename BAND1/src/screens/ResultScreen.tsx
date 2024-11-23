@@ -10,7 +10,7 @@ import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
 import ColouredCircle from '../components/ColouredCircle';
 import {Image as SvgImage} from 'react-native-svg';
 import PressableIcon from '../components/PressableIcon';
-import UserData from '../backend/UserData';
+import {User} from '../backend/UserData';
 // import { useRoute } from '@react-navigation/native';
 import {colours} from '../Values';
 
@@ -63,12 +63,15 @@ const ResultScreen = ({navigation}: any) => {
   const [result, setResult] = useState("Calculating...");
 
   useEffect(() => {
-    const initialTemp = 27;  // temporary hard coding temperature
-    const User = new UserData(initialTemp);
+    let avgTempListener = User.addListener(User.avgTempChange, setAvgTemp);
+    let maxTempListener = User.addListener(User.maxTempChange, setHighTemp);
+    let minTempListener = User.addListener(User.minTempChange, setLowTemp);
 
-    User.on(User.avgTempChange, setAvgTemp);
-    User.on(User.maxTempChange, setHighTemp);
-    User.on(User.minTempChange, setLowTemp);
+    return () => {
+      avgTempListener.remove();
+      maxTempListener.remove();
+      minTempListener.remove();
+    }
   })
 
   return (

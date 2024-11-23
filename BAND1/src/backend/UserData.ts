@@ -1,38 +1,34 @@
-import EventEmitter from 'events';
+import { NativeEventEmitter } from "react-native";
 
 const THRESHOLD_TEMPERATURE_CHANGE = 2;
 const THRESHOLD_PH = -1;  // temporary value needs to be changed
 
-class UserData extends EventEmitter {
+const NUMBER_DATA_POINTS = (60 / 5) * 10;  // keep shifted average of last 10mins of data
 
+class UserData extends NativeEventEmitter {
+
+    public infectionDetected: string = 'infectionDetected';
     public avgTempChange: string = 'avgTempChange';
     public minTempChange: string = 'minTempChange';
     public maxTempChange: string = 'maxTempChange';
     public highTemp: string = 'highTemp';
     public highPH: string = 'highPH';
 
-    private initialTemp: number;
+    private initialTemp: number | undefined;
+    private temps: number[];
     private averageTemp: number;
     private minTemp: number;
     private maxTemp: number;
-    private numReadings: number;
 
-    private currentpH: string;
+    private currentpH: number | undefined;
 
-    private infected: boolean;
-
-    constructor(initialTemp: number) {
+    constructor() {
         super();
-        this.infected = false;
 
-        this.initialTemp = initialTemp;
-        this.averageTemp = 0;
+        this.temps = new Array(NUMBER_DATA_POINTS);  
         this.minTemp = 0;
         this.maxTemp = 0;
-
-        this.numReadings = 0;
-
-        this.currentpH = "";
+        this.averageTemp = 0;
     }
 
     /**
@@ -44,7 +40,19 @@ class UserData extends EventEmitter {
      * @emits highTemp                      if the difference between the initial value and the current value exceeds the threshold
      */
     public updateTemp(temp: number) {
-        const newAverage: number = ((this.averageTemp * this.numReadings) + temp) / ++this.numReadings;
+        if (this.initialTemp === undefined) {
+            throw new Error('call calibrate before calling update methods');
+        }
+
+        if (this.temps.length === NUMBER_DATA_POINTS) {
+            this.temps.shift();
+        }
+
+        this.temps.push();
+
+        const newAverage = (this.temps.reduce((prev: number, current: number) => {
+            return prev + current;
+        })) / this.temps.length;
 
         if (newAverage != this.averageTemp) {
             this.averageTemp = newAverage;
@@ -61,8 +69,13 @@ class UserData extends EventEmitter {
             this.emit(this.maxTempChange, this.maxTemp);
         }
 
-        if ((temp - this.initialTemp) > THRESHOLD_TEMPERATURE_CHANGE) {
+        if ((this.averageTemp - this.initialTemp) > THRESHOLD_TEMPERATURE_CHANGE) {
             this.emit(this.highTemp);
+
+            if (this.currentpH && this.currentpH > THRESHOLD_PH) {
+                this.emit(this.highPH);
+                this.emit(this.infectionDetected);
+            }
         }
     }
 
@@ -71,18 +84,23 @@ class UserData extends EventEmitter {
      * 
      * @emits highPH    if the pH colour value translates to a pH that is past the threshold value
      */
-    public updatePH(pH: string) {
+    public updatePH(pH: number) {
+        if (this.initialTemp === undefined) {
+            throw new Error('call calibrate before calling update methods');
+        }
+
         this.currentpH = pH;
 
-        if (this.pHValueFromColour(pH) > THRESHOLD_PH) {
+        if (pH > THRESHOLD_PH) {
             this.emit(this.highPH);
-        }
-    }
 
-    private pHValueFromColour(colour: string) {
-        return 0; // temporary
+            if ((this.averageTemp - this.initialTemp) > THRESHOLD_TEMPERATURE_CHANGE) {
+                this.emit(this.highTemp);
+                this.emit(this.infectionDetected);
+            }
+        }
     }
 
 }
 
-export default UserData;
+export const User = new UserData();
