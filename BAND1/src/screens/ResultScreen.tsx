@@ -1,5 +1,5 @@
 import React, {PropsWithChildren, useState} from 'react';
-import {Text, View, Image} from 'react-native';
+import {Text, View, Modal, TouchableOpacity} from 'react-native';
 import styles from '../Styles';
 import SmallLogo from '../components/SmallLogo';
 import ProgressBar from '../components/ProgressBar';
@@ -11,6 +11,7 @@ import ColouredCircle from '../components/ColouredCircle';
 import {Image as SvgImage} from 'react-native-svg';
 import PressableIcon from '../components/PressableIcon';
 import {colours} from '../Values';
+import PHColorPicker from '../components/PHColorPicker';
 
 type SectionProps = PropsWithChildren<{
   iconSource: any;
@@ -55,6 +56,30 @@ const InfoBox = ({message}: MessageProps) => {
 const ResultScreen = ({navigation}: any) => {
   const [message, setMessage] = useState('Device Connected');
 
+  const [phValue, setPhValue] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const getColour = ph => {
+    const ratio = (ph - 7.0) / 2.0; // Map pH 7.0-9.0 to 0-1
+
+    // Start color: rgb(0, 255, 100)
+    const startR = 0,
+      startG = 255,
+      startB = 100;
+
+    // End color: rgb(0, 100, 150)
+    const endR = 0,
+      endG = 100,
+      endB = 150;
+
+    // Interpolate each RGB component
+    const r = Math.round((1 - ratio) * startR + ratio * endR);
+    const g = Math.round((1 - ratio) * startG + ratio * endG);
+    const b = Math.round((1 - ratio) * startB + ratio * endB);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
   return (
     <View style={styles.screen}>
       <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
@@ -89,7 +114,7 @@ const ResultScreen = ({navigation}: any) => {
               Average
             </Text>
           </View>
-          <View styles={styles.hlTemp}>
+          <View>
             <Text style={styles.boldText}>{'H:  --\u2103'}</Text>
             <View
               style={{
@@ -105,28 +130,53 @@ const ResultScreen = ({navigation}: any) => {
         <HorizontalTextIconRow
           textStyle={styles.boldText}
           text="Current pH color:">
-          <PressableIcon
+          {/* <PressableIcon
             onPress={() => {
               console.log('icon clicked');
             }}>
             <Image style={styles.image} source={images.icons.camera} />
-          </PressableIcon>
-          <PressableIcon
+          </PressableIcon> */}
+          {/* <PressableIcon
             onPress={() => {
               console.log('icon clicked');
             }}>
             <Image style={styles.image} source={images.icons.arrow} />
-          </PressableIcon>
+          </PressableIcon> */}
           <PressableIcon
             onPress={() => {
-              console.log('icon clicked');
+              setModalVisible(true);
             }}>
             <View style={styles.image}>
-              <ColouredCircle colour="white" />
+              <ColouredCircle
+                colour={phValue === 0 ? 'white' : getColour(phValue)}
+              />
             </View>
           </PressableIcon>
         </HorizontalTextIconRow>
+        <Text style={styles.modalPHValue}>
+          Current pH: {phValue != 0 ? phValue.toFixed(1) : 'Not selected'}
+        </Text>
       </ResultSection>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <PHColorPicker
+              phValue={phValue}
+              setPhValue={setPhValue}
+              getColour={getColour}></PHColorPicker>
+
+            <TouchableOpacity
+              style={styles.modalCloseBtn}
+              onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalCloseBtnText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
