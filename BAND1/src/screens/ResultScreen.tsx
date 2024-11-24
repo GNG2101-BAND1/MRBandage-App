@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useState} from 'react';
+import React, {PropsWithChildren, useEffect, useState} from 'react';
 import {Text, View, Modal, TouchableOpacity} from 'react-native';
 import styles from '../Styles';
 import SmallLogo from '../components/SmallLogo';
@@ -8,8 +8,8 @@ import DisplayBox from '../components/DisplayBox';
 import {images} from '../Values';
 import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
 import ColouredCircle from '../components/ColouredCircle';
-import {Image as SvgImage} from 'react-native-svg';
 import PressableIcon from '../components/PressableIcon';
+import {User} from '../backend/UserData';
 import {colours} from '../Values';
 import PHColorPicker from '../components/PHColorPicker';
 
@@ -54,8 +54,15 @@ const InfoBox = ({message}: MessageProps) => {
 };
 
 const ResultScreen = ({navigation}: any) => {
-  const [message, setMessage] = useState('Device Connected');
 
+  const POSTIVE_MESSAGE = "Elevated pH and temperature levels suggest possible infection.";
+  const NEGATIVE_MESSAGE = "Wound is in good condition. Keep it clean and protected.";
+
+  const [avgTemp, setAvgTemp] = useState(User.getAverageTemp());
+  const [lowTemp, setLowTemp] = useState(User.getMinTemp());
+  const [highTemp, setHighTemp] = useState(User.getMaxTemp());
+  const [message, setMessage] = useState('Device Connected');
+  const [result, setResult] = useState(false);
   const [phValue, setPhValue] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -80,6 +87,24 @@ const ResultScreen = ({navigation}: any) => {
     return `rgb(${r}, ${g}, ${b})`;
   };
 
+  useEffect(() => {
+    let avgTempListener = User.addListener(User.avgTempChange, setAvgTemp);
+    let maxTempListener = User.addListener(User.maxTempChange, setHighTemp);
+    let minTempListener = User.addListener(User.minTempChange, setLowTemp);
+    let infectionStatusListener = User.addListener(User.infectionStatusChange, setResult);
+    let highTempListener = User.addListener(User.highTemp, () => {
+      setMessage("Please Check pH");
+    })
+
+    return () => {
+      avgTempListener.remove();
+      maxTempListener.remove();
+      minTempListener.remove();
+      infectionStatusListener.remove();
+      highTempListener.remove();
+    }
+  })
+
   return (
     <View style={styles.screen}>
       <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
@@ -97,14 +122,17 @@ const ResultScreen = ({navigation}: any) => {
       </View>
 
       <ResultSection iconSource={images.icons.heart} sectionTitle="Result">
-        <Text style={styles.resultMessage}>Calculating...</Text>
+        <Text style={{...styles.resultHeading, color: result ? colours.brandDarkRed : colours.textDarkBlue}}>
+          {result ? "POSITIVE" : "NEGATIVE"} </Text>
+        <Text style={{...styles.resultMessage, color: result ? colours.brandLightOrange : colours.brandPalePurple}}>
+          {result ? POSTIVE_MESSAGE : NEGATIVE_MESSAGE} </Text>
       </ResultSection>
       <ResultSection
         iconSource={images.icons.thermometer}
         sectionTitle="Temperature">
         <View style={styles.temperatureContent}>
           <View style={styles.avgTemp}>
-            <Text style={{...styles.boldText, fontSize: 40}}>{'--\u2103'}</Text>
+            <Text style={{...styles.boldText, fontSize: 40}}>{avgTemp + '\u2103'}</Text>
             <Text
               style={{
                 ...styles.boldText,
@@ -115,14 +143,14 @@ const ResultScreen = ({navigation}: any) => {
             </Text>
           </View>
           <View>
-            <Text style={styles.boldText}>{'H:  --\u2103'}</Text>
+            <Text style={styles.boldText}>{'H:  ' + highTemp + '\u2103'}</Text>
             <View
               style={{
                 borderBottomColor: 'black',
                 borderBottomWidth: 1,
               }}
             />
-            <Text style={styles.boldText}>{'L:  --\u2103'}</Text>
+            <Text style={styles.boldText}>{'L:  ' + lowTemp + '\u2103'}</Text>
           </View>
         </View>
       </ResultSection>
@@ -166,7 +194,10 @@ const ResultScreen = ({navigation}: any) => {
           <View style={styles.modalContent}>
             <PHColorPicker
               phValue={phValue}
-              setPhValue={setPhValue}
+              setPhValue={(value) => {
+                setPhValue(value);
+                User.updatePH(value);
+              }}
               getColour={getColour}></PHColorPicker>
 
             <TouchableOpacity

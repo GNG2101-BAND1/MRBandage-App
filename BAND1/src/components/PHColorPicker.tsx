@@ -35,7 +35,7 @@ const PHColorPicker = ({phValue, setPhValue, getColour}: PHColorPickerProp) => {
         style={styles.modalSlider}
         minimumValue={7.0}
         maximumValue={9.0}
-        step={0.1}
+        step={0.5}
         minimumTrackTintColor="#004b70"
         maximumTrackTintColor="#00ff66"
         thumbTintColor={getColour(phValue)}

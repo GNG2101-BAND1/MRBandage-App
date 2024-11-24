@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import PressableIconTextBox from './PressableIconTextBox';
+import { Peripheral } from 'react-native-ble-manager';
 
 type DeviceProps = {
-  deviceName: string;
+  device: Peripheral;
   iconSource: any;
-  onSelect: any;
+  onSelect: (device: Peripheral) => void;
   viewStyle: any;
   iconStyle: any;
   textStyle: any;
@@ -12,7 +13,7 @@ type DeviceProps = {
 };
 
 const DeviceBox = ({
-  deviceName,
+  device,
   iconSource,
   onSelect,
   viewStyle,
@@ -23,10 +24,10 @@ const DeviceBox = ({
   return (
     <PressableIconTextBox
       activeOpacity={activeOpacity}
-      text={deviceName}
+      text={device.name ? device.name : ''}
       iconSource={iconSource}
       onPress={() => {
-        onSelect(deviceName);
+        onSelect(device);
       }}
       viewStyle={viewStyle}
       iconStyle={iconStyle}
