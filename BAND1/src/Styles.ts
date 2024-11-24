@@ -295,6 +295,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  attachmentImage: {
+    width: '100%',
+    height: '55%',
+    objectFit: 'contain',
+  },
+
+  calibrationText: {
+    paddingBottom: 50,
+  },
 });
 
 export default styles;

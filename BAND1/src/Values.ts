@@ -21,6 +21,9 @@ const images = {
     drop: require('./assets/pH.png'),
     arrow: require('./assets/arrow.png'),
   },
+  images: {
+    deviceAttachment: require('./assets/DeviceAttachment.png'),
+  },
   devices: {},
 };
 

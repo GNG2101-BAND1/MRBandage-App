@@ -100,9 +100,9 @@ const DisplayBoxContent = ({
       return (
         <View style={{padding: 10}}>
           <Text style={{marginBottom: 10, ...styles.boldText}}>
-            Connected Device:
+            Device calibration:
           </Text>
-          <DeviceBox
+          {/* <DeviceBox
             key={selectedDevice}
             deviceName={selectedDevice}
             iconSource={{
@@ -120,6 +120,13 @@ const DisplayBoxContent = ({
             iconStyle={(styles.image, styles.iconTextBoxImage)}
             textStyle={styles.deviceTitle}
             activeOpacity={1}
+          /> */}
+          <Text style={{marginBottom: 10, ...styles.text}}>
+            Attach the device onto the skin surface to calibrate temperature
+          </Text>
+          <Image
+            style={styles.attachmentImage}
+            source={images.images.deviceAttachment}
           />
         </View>
       );
@@ -136,6 +143,8 @@ const ConnectScreen = ({navigation}: any) => {
   const [deviceList, setDeviceList] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const [countdown, setCountdown] = useState(-1); // 10-second countdown
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
@@ -163,7 +172,6 @@ const ConnectScreen = ({navigation}: any) => {
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       nextStep();
-      console.log(stepNumber + 1);
       Alert.alert('Device Connected', selectedDevice, [
         {
           text: 'Continue',
@@ -174,13 +182,9 @@ const ConnectScreen = ({navigation}: any) => {
 
     return () => clearTimeout(timeoutId);
   };
-
   const nextStep = () => {
     if (stepNumber < numberOfSteps) {
-      stepNumber === 4 ? setButtonText('Continue') : null;
       setStepNumber(prev => prev + 1);
-      console.log(stepNumber + 1);
-      setButtonText(stepNumber === 2 ? 'Continue' : 'Connect Device');
     } else {
       navigation.navigate('Result');
     }
@@ -197,11 +201,13 @@ const ConnectScreen = ({navigation}: any) => {
         setStepNumber(2);
         setSelectedDevice('');
         setButtonText('Select Device');
+        setCountdown(-1);
         break;
     }
   };
 
-  const initiateConnection = () => {
+  const connectScreenBtnOnPress = () => {
+    console.log(stepNumber);
     if (stepNumber === 0) {
       console.log('Mocking device search');
       mockSearch();
@@ -213,16 +219,32 @@ const ConnectScreen = ({navigation}: any) => {
       }
       console.log('Mocking connection');
       mockConnection();
+      setButtonText('Start Calibration');
+    } else if (stepNumber === 4 && countdown === -1) {
+      startCalibration();
     } else {
       nextStep();
     }
+  };
+  const startCalibration = () => {
+    let timer = 10;
+    setCountdown(timer);
+    setButtonText('Calibration in process...');
+
+    const intervalId = setInterval(() => {
+      timer -= 1;
+      setCountdown(timer);
+      if (timer === 0) {
+        clearInterval(intervalId);
+        Alert.alert('Calibration Complete', 'The device is ready for use.');
+        setButtonText('Continue');
+      }
+    }, 1000);
   };
 
   return (
     <View style={styles.screen}>
       <BigLogo name="MRBandage" slogan="Detect your infections early" />
-
-      {/* add code to show display box here */}
       <DisplayBox visible={stepNumber > 0 || isLoading}>
         <DisplayBoxContent
           stepNumber={stepNumber}
@@ -239,15 +261,21 @@ const ConnectScreen = ({navigation}: any) => {
           styles.centerAlignContainer,
           styles.bottomAlignContainer,
         ]}>
-        <ProgressBar
-          numberOfPages={numberOfSteps}
-          activePage={Math.round(stepNumber / 2.5)}
-        />
-
-        {stepNumber === 1 || stepNumber === 3 ? null : (
-          <Button title={buttonText} onPress={initiateConnection} />
+        {stepNumber === 4 && countdown > 0 ? (
+          <Text style={[styles.boldText, styles.calibrationText]}>
+            Calibration in process: {countdown} seconds remaining
+          </Text>
+        ) : (
+          <ProgressBar
+            numberOfPages={numberOfSteps}
+            activePage={Math.round(stepNumber / 2.5)}
+          />
         )}
-        {stepNumber > 1 && stepNumber !== 3 ? (
+
+        {stepNumber === 1 || stepNumber === 3 || countdown > 0 ? null : (
+          <Button title={buttonText} onPress={connectScreenBtnOnPress} />
+        )}
+        {stepNumber > 1 && stepNumber !== 3 && countdown <= 0 ? (
           <Button
             title="Back"
             onPress={previousStep}
