@@ -19,7 +19,6 @@ type DisplayBoxContentProps = {
   setButtonText: any;
 };
 
-// temporary brute force rendering of box content change
 const DisplayBoxContent = ({
   stepNumber,
   deviceList = null,
@@ -102,25 +101,6 @@ const DisplayBoxContent = ({
           <Text style={{marginBottom: 10, ...styles.boldText}}>
             Device calibration:
           </Text>
-          {/* <DeviceBox
-            key={selectedDevice}
-            deviceName={selectedDevice}
-            iconSource={{
-              uri: 'https://pngimg.com/d/wifi_PNG62360.png',
-            }}
-            onSelect={() => {
-              console.log('Clicked');
-            }}
-            viewStyle={[
-              styles.viewContainer,
-              styles.leftAlignContainer,
-              styles.iconTextBox,
-              // styles.selectedIconTextBox,
-            ]}
-            iconStyle={(styles.image, styles.iconTextBoxImage)}
-            textStyle={styles.deviceTitle}
-            activeOpacity={1}
-          /> */}
           <Text style={{marginBottom: 10, ...styles.text}}>
             Attach the device onto the skin surface to calibrate temperature
           </Text>
@@ -201,13 +181,12 @@ const ConnectScreen = ({navigation}: any) => {
         setStepNumber(2);
         setSelectedDevice('');
         setButtonText('Select Device');
-        setCountdown(-1);
+        setCountdown(-1); // reset counter for calibration
         break;
     }
   };
 
-  const connectScreenBtnOnPress = () => {
-    console.log(stepNumber);
+  const initiateConnection = () => {
     if (stepNumber === 0) {
       console.log('Mocking device search');
       mockSearch();
@@ -273,7 +252,7 @@ const ConnectScreen = ({navigation}: any) => {
         )}
 
         {stepNumber === 1 || stepNumber === 3 || countdown > 0 ? null : (
-          <Button title={buttonText} onPress={connectScreenBtnOnPress} />
+          <Button title={buttonText} onPress={initiateConnection} />
         )}
         {stepNumber > 1 && stepNumber !== 3 && countdown <= 0 ? (
           <Button
