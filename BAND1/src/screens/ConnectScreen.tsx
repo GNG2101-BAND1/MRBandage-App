@@ -5,16 +5,20 @@ import BigLogo from '../components/BigLogo';
 import ProgressBar from '../components/ProgressBar';
 import Button from '../components/Button';
 import DisplayBox from '../components/DisplayBox';
-import HorizontalTextIconRow from '../components/HorizontalTextIconRow';
-import PressableIcon from '../components/PressableIcon';
-import {colours, images} from '../Values';
-import ColouredCircle from '../components/ColouredCircle';
 import DeviceBox from '../components/DeviceBox';
+import {
+  connectDevice,
+  disconnectDevice,
+  startScan,
+} from '../backend/BluetoothManager';
+import {Peripheral} from 'react-native-ble-manager';
+import {generateTemperatures} from '../backend/MockDataGenerator';
+import {images} from '../Values';
 
 type DisplayBoxContentProps = {
   stepNumber: number;
-  deviceList: string[] | null;
-  selectedDevice: string;
+  deviceList: Peripheral[] | null;
+  selectedDevice: Peripheral;
   setSelectedDevice: any;
   setButtonText: any;
 };
@@ -49,13 +53,13 @@ const DisplayBoxContent = ({
           {deviceList?.map(device => {
             return (
               <DeviceBox
-                key={device}
-                deviceName={device}
+                key={device?.id}
+                device={device}
                 iconSource={{
                   uri: 'https://pngimg.com/d/wifi_PNG62360.png',
                 }}
-                onSelect={device => {
-                  console.log(device + ' selected');
+                onSelect={(device: Peripheral) => {
+                  console.log(device?.name + ' selected');
                   setSelectedDevice(device);
                   setButtonText('Connect Device');
                 }}
@@ -85,7 +89,7 @@ const DisplayBoxContent = ({
       return (
         <View>
           <Text style={styles.deviceListTitle}>
-            Connecting to {selectedDevice}...
+            Connecting to {selectedDevice.name}...
           </Text>
           <Image
             style={styles.loadingGIF}
@@ -120,8 +124,8 @@ const ConnectScreen = ({navigation}: any) => {
   const [stepNumber, setStepNumber] = useState(0);
   const [buttonText, setButtonText] = useState('Connect Device');
 
-  const [deviceList, setDeviceList] = useState([]);
-  const [selectedDevice, setSelectedDevice] = useState('');
+  const [deviceList, setDeviceList] = useState(new Array());
+  const [selectedDevice, setSelectedDevice] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [countdown, setCountdown] = useState(-1); // 10-second countdown
@@ -146,6 +150,21 @@ const ConnectScreen = ({navigation}: any) => {
     return () => clearTimeout(timeoutId);
   };
 
+  const search = () => {
+    startScan(
+      () => {
+        setIsLoading(true);
+        setStepNumber(1);
+      },
+      devices => {
+        setIsLoading(false);
+        nextStep();
+        setButtonText(selectedDevice ? 'Connect Device' : 'Select Device');
+        setDeviceList(Array.from(devices.values()));
+      },
+    );
+  };
+
   const mockConnection = async () => {
     setIsLoading(true);
     setStepNumber(3);
@@ -162,6 +181,17 @@ const ConnectScreen = ({navigation}: any) => {
 
     return () => clearTimeout(timeoutId);
   };
+
+  const connect = () => {
+    setIsLoading(true);
+    setStepNumber(3);
+    connectDevice(selectedDevice?.id, () => {
+      setIsLoading(false);
+      nextStep();
+      console.log(stepNumber + 1);
+    });
+  };
+
   const nextStep = () => {
     if (stepNumber < numberOfSteps) {
       setStepNumber(prev => prev + 1);
@@ -174,31 +204,37 @@ const ConnectScreen = ({navigation}: any) => {
     switch (stepNumber) {
       case 2:
         setStepNumber(0);
-        setSelectedDevice('');
+        setSelectedDevice(null);
         setButtonText('Connect Device');
+        disconnectDevice();
         break;
       case 4:
         setStepNumber(2);
-        setSelectedDevice('');
+        setSelectedDevice(null);
         setButtonText('Select Device');
         setCountdown(-1); // reset counter for calibration
+        disconnectDevice();
         break;
     }
   };
 
   const initiateConnection = () => {
     if (stepNumber === 0) {
-      console.log('Mocking device search');
-      mockSearch();
+      // console.log('Mocking device search');
+      // mockSearch();
+      search();
     } else if (stepNumber === 2) {
-      if (selectedDevice === '') {
+      if (selectedDevice === null) {
         console.log('Please select a device');
         Alert.alert('No device selected', 'Please select a device');
         return;
       }
-      console.log('Mocking connection');
-      mockConnection();
+      // console.log('Mocking connection');
+      // mockConnection();
+      // generateTemperatures();
       setButtonText('Start Calibration');
+      console.log('Connecting to ' + selectedDevice?.name);
+      connect();
     } else if (stepNumber === 4 && countdown === -1) {
       startCalibration();
     } else {

@@ -213,10 +213,14 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 
-  resultMessage: {
-    color: colours.textDarkBlue,
+  resultHeading: {
     fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  resultMessage: {
+    fontSize: 14,
     textAlign: 'center',
   },
 
