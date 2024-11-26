@@ -10,6 +10,8 @@ import {
   connectDevice,
   disconnectDevice,
   startScan,
+  startCalibration,
+  start
 } from '../backend/BluetoothManager';
 import {Peripheral} from 'react-native-ble-manager';
 import {generateTemperatures} from '../backend/MockDataGenerator';
@@ -222,9 +224,9 @@ const ConnectScreen = ({navigation}: any) => {
 
   const initiateConnection = () => {
     if (stepNumber === 0) {
-      console.log('Mocking device search');
-      mockSearch();
-      // search();
+      // console.log('Mocking device search');
+      // mockSearch();
+      search();
     } else if (stepNumber === 2) {
       if (selectedDevice === null) {
         console.log('Please select a device');
@@ -232,20 +234,21 @@ const ConnectScreen = ({navigation}: any) => {
         return;
       }
       console.log('Mocking connection');
-      mockConnection();
-      generateTemperatures();
+      // mockConnection();
+      // generateTemperatures();
       setButtonText('Start Calibration');
-      // console.log('Connecting to ' + selectedDevice?.name);
-      // connect();
+      console.log('Connecting to ' + selectedDevice?.name);
+      connect();
     } else if (stepNumber === 4 && calibration === '') {
-      startCalibration();
+      initializeCalibration();
     } else {
       nextStep();
     }
   };
-  const startCalibration = () => {
+  
+  const initializeCalibration = () => {
     // currently mocking calibration for 10seconds
-    let timer = 10;
+    // let timer = 10;
     let dotCount = 0; // To cycle through the dots
     setButtonText('Calibrating');
 
@@ -255,14 +258,14 @@ const ConnectScreen = ({navigation}: any) => {
       const dots = '.'.repeat(dotCount); // Generate dots based on dotCount
       setButtonText(`Calibration in process${dots}`);
 
-      timer -= 1;
       setCalibration('Calibrating');
-      if (timer === 0) {
+      startCalibration().then(() => {
         setCalibration('Calibrated');
         clearInterval(intervalId);
         Alert.alert('Calibration Complete', 'The device is ready for use.');
+        start();
         setButtonText('Continue');
-      }
+      })
     }, 1000);
   };
 

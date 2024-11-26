@@ -96,20 +96,23 @@ const handleDisconnection = () => {
 const startCalibration = () => {
     let prev: number | undefined;
 
-    let listener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
-        ( {value, peripheral, characteristic, service} ) => {
-            const data = Buffer.from(value).readInt16LE(0);
-            console.log(`Received ${data} for characteristic ${characteristic}`);
-
-            if (prev) {
-                User.calibrate((prev + data) / 2);
-                canStart = true;
-                listener.remove();
-            } else {
-                prev = data;
+    return new Promise<void>((resolve, reject) => {
+        let listener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
+            ( {value, peripheral, characteristic, service} ) => {
+                const data = Buffer.from(value).readInt16LE(0);
+                console.log(`Received ${data} for characteristic ${characteristic}`);
+    
+                if (prev) {
+                    User.calibrate((prev + data) / 2);
+                    canStart = true;
+                    listener.remove();
+                    resolve();
+                } else {
+                    prev = data;
+                }
             }
-        }
-    );
+        );
+    })
 }
 
 /**
@@ -167,4 +170,4 @@ BleManager.enableBluetooth().then(
     }
 );
 
-export {startScan, connectDevice, disconnectDevice};
+export {startScan, connectDevice, disconnectDevice, startCalibration, start};
