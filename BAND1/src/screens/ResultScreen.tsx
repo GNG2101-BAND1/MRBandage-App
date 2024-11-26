@@ -89,26 +89,18 @@ const ResultScreen = ({navigation}: any) => {
   };
 
   useEffect(() => {
-    let avgTempListener = User.addListener(User.avgTempChange, setAvgTemp);
-    let maxTempListener = User.addListener(User.maxTempChange, setHighTemp);
-    let minTempListener = User.addListener(User.minTempChange, setLowTemp);
-    let infectionStatusListener = User.addListener(
-      User.infectionStatusChange,
-      setResult,
-    );
-    let highTempListener = User.addListener(User.highTemp, () => {
+    User.on(User.avgTempChange, setAvgTemp);
+    User.on(User.maxTempChange, setHighTemp);
+    User.on(User.minTempChange, setLowTemp);
+    User.on(User.infectionStatusChange, setResult);
+    User.on(User.highTemp, () => {
       setMessage('Please Check pH');
     });
 
     return () => {
-      avgTempListener.remove();
-      maxTempListener.remove();
-      minTempListener.remove();
-      infectionStatusListener.remove();
-      highTempListener.remove();
+      User.removeAllListeners();
     };
   });
-
   return (
     <View style={styles.screen}>
       <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>

@@ -48,5 +48,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>MRBandage uses Bluetooth to connect to the MRSensor</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>MRBandage does not use any peripherals...</string>
 </dict>
 </plist>
