@@ -128,7 +128,7 @@ const ConnectScreen = ({navigation}: any) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [countdown, setCountdown] = useState(-1); // 10-second countdown
+  const [calibration, setCalibration] = useState(''); // 10-second countdown
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
@@ -212,7 +212,7 @@ const ConnectScreen = ({navigation}: any) => {
         setStepNumber(2);
         setSelectedDevice(null);
         setButtonText('Select Device');
-        setCountdown(-1); // reset counter for calibration
+        setCalibration(''); // reset calibration
         disconnectDevice();
         break;
     }
@@ -220,36 +220,43 @@ const ConnectScreen = ({navigation}: any) => {
 
   const initiateConnection = () => {
     if (stepNumber === 0) {
-      // console.log('Mocking device search');
-      // mockSearch();
-      search();
+      console.log('Mocking device search');
+      mockSearch();
+      // search();
     } else if (stepNumber === 2) {
       if (selectedDevice === null) {
         console.log('Please select a device');
         Alert.alert('No device selected', 'Please select a device');
         return;
       }
-      // console.log('Mocking connection');
-      // mockConnection();
-      // generateTemperatures();
+      console.log('Mocking connection');
+      mockConnection();
+      generateTemperatures();
       setButtonText('Start Calibration');
-      console.log('Connecting to ' + selectedDevice?.name);
-      connect();
-    } else if (stepNumber === 4 && countdown === -1) {
+      // console.log('Connecting to ' + selectedDevice?.name);
+      // connect();
+    } else if (stepNumber === 4 && calibration === '') {
       startCalibration();
     } else {
       nextStep();
     }
   };
   const startCalibration = () => {
+    // currently mocking calibration for 10seconds
     let timer = 10;
-    setCountdown(timer);
-    setButtonText('Calibration in process...');
+    let dotCount = 0; // To cycle through the dots
+    setButtonText('Calibrating');
 
     const intervalId = setInterval(() => {
+      // Update the loading dots
+      dotCount = (dotCount + 1) % 4; // Cycle through 0, 1, 2, 3
+      const dots = '.'.repeat(dotCount); // Generate dots based on dotCount
+      setButtonText(`Calibration in process${dots}`);
+
       timer -= 1;
-      setCountdown(timer);
+      setCalibration('Calibrating');
       if (timer === 0) {
+        setCalibration('Calibrated');
         clearInterval(intervalId);
         Alert.alert('Calibration Complete', 'The device is ready for use.');
         setButtonText('Continue');
@@ -276,9 +283,9 @@ const ConnectScreen = ({navigation}: any) => {
           styles.centerAlignContainer,
           styles.bottomAlignContainer,
         ]}>
-        {stepNumber === 4 && countdown > 0 ? (
+        {stepNumber === 4 && calibration === 'Calibrating' ? (
           <Text style={[styles.boldText, styles.calibrationText]}>
-            Calibration in process: {countdown} seconds remaining
+            {buttonText}
           </Text>
         ) : (
           <ProgressBar
@@ -287,10 +294,12 @@ const ConnectScreen = ({navigation}: any) => {
           />
         )}
 
-        {stepNumber === 1 || stepNumber === 3 || countdown > 0 ? null : (
+        {stepNumber === 1 ||
+        stepNumber === 3 ||
+        calibration === 'Calibrating' ? null : (
           <Button title={buttonText} onPress={initiateConnection} />
         )}
-        {stepNumber > 1 && stepNumber !== 3 && countdown <= 0 ? (
+        {stepNumber > 1 && stepNumber !== 3 && calibration !== 'Calibrating' ? (
           <Button
             title="Back"
             onPress={previousStep}
