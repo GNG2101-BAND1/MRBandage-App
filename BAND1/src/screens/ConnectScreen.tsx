@@ -6,9 +6,13 @@ import ProgressBar from '../components/ProgressBar';
 import Button from '../components/Button';
 import DisplayBox from '../components/DisplayBox';
 import DeviceBox from '../components/DeviceBox';
-import { connectDevice, disconnectDevice, startScan } from '../backend/BluetoothManager';
-import { Peripheral } from 'react-native-ble-manager';
-import { generateTemperatures } from '../backend/MockDataGenerator';
+import {
+  connectDevice,
+  disconnectDevice,
+  startScan,
+} from '../backend/BluetoothManager';
+import {Peripheral} from 'react-native-ble-manager';
+import {generateTemperatures} from '../backend/MockDataGenerator';
 
 type DisplayBoxContentProps = {
   stepNumber: number;
@@ -43,7 +47,9 @@ const DisplayBoxContent = ({
       return (
         <>
           <Text style={styles.deviceListTitle}>
-            {deviceList ? 'Devices Found:' : 'No devices were found...'}
+            {deviceList && deviceList.length > 0
+              ? 'Devices Found:'
+              : 'No devices were found...'}
           </Text>
 
           {deviceList?.map(device => {
@@ -157,15 +163,18 @@ const ConnectScreen = ({navigation}: any) => {
   };
 
   const search = () => {
-    startScan(() => {
-      setIsLoading(true);
-      setStepNumber(1);
-    }, devices => {
-      setIsLoading(false);
-      nextStep();
-      setButtonText(selectedDevice ? 'Connect Device' : 'Select Device');
-      setDeviceList(Array.from(devices.values()));
-    })
+    startScan(
+      () => {
+        setIsLoading(true);
+        setStepNumber(1);
+      },
+      devices => {
+        setIsLoading(false);
+        nextStep();
+        setButtonText(selectedDevice ? 'Connect Device' : 'Select Device');
+        setDeviceList(Array.from(devices.values()));
+      },
+    );
   };
 
   const mockConnection = async () => {
@@ -187,7 +196,7 @@ const ConnectScreen = ({navigation}: any) => {
       setIsLoading(false);
       nextStep();
       console.log(stepNumber + 1);
-    })
+    });
   };
 
   const nextStep = () => {
@@ -220,20 +229,20 @@ const ConnectScreen = ({navigation}: any) => {
 
   const initiateConnection = () => {
     if (stepNumber === 0) {
-      // console.log('Mocking device search');
-      // mockSearch();
-      search();
+      console.log('Mocking device search');
+      mockSearch();
+      // search();
     } else if (stepNumber === 2) {
       if (selectedDevice === null) {
         console.log('Please select a device');
         Alert.alert('No device selected', 'Please select a device');
         return;
       }
-      // console.log('Mocking connection');
-      // mockConnection();
-      // generateTemperatures();
-      console.log("Connecting to " + selectedDevice?.name);
-      connect();
+      console.log('Mocking connection');
+      mockConnection();
+      generateTemperatures();
+      // console.log('Connecting to ' + selectedDevice?.name);
+      // connect();
     } else {
       nextStep();
     }

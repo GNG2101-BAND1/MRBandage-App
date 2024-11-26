@@ -54,9 +54,10 @@ const InfoBox = ({message}: MessageProps) => {
 };
 
 const ResultScreen = ({navigation}: any) => {
-
-  const POSTIVE_MESSAGE = "Elevated pH and temperature levels suggest possible infection.";
-  const NEGATIVE_MESSAGE = "Wound is in good condition. Keep it clean and protected.";
+  const POSTIVE_MESSAGE =
+    'Elevated pH and temperature levels suggest possible infection.';
+  const NEGATIVE_MESSAGE =
+    'Wound is in good condition. Keep it clean and protected.';
 
   const [avgTemp, setAvgTemp] = useState(User.getAverageTemp());
   const [lowTemp, setLowTemp] = useState(User.getMinTemp());
@@ -88,23 +89,18 @@ const ResultScreen = ({navigation}: any) => {
   };
 
   useEffect(() => {
-    let avgTempListener = User.addListener(User.avgTempChange, setAvgTemp);
-    let maxTempListener = User.addListener(User.maxTempChange, setHighTemp);
-    let minTempListener = User.addListener(User.minTempChange, setLowTemp);
-    let infectionStatusListener = User.addListener(User.infectionStatusChange, setResult);
-    let highTempListener = User.addListener(User.highTemp, () => {
-      setMessage("Please Check pH");
-    })
+    User.on(User.avgTempChange, setAvgTemp);
+    User.on(User.maxTempChange, setHighTemp);
+    User.on(User.minTempChange, setLowTemp);
+    User.on(User.infectionStatusChange, setResult);
+    User.on(User.highTemp, () => {
+      setMessage('Please Check pH');
+    });
 
     return () => {
-      avgTempListener.remove();
-      maxTempListener.remove();
-      minTempListener.remove();
-      infectionStatusListener.remove();
-      highTempListener.remove();
-    }
-  })
-
+      User.removeAllListeners();
+    };
+  });
   return (
     <View style={styles.screen}>
       <View style={[styles.sectionContainer, styles.spacedEvenlyContainer]}>
@@ -122,17 +118,29 @@ const ResultScreen = ({navigation}: any) => {
       </View>
 
       <ResultSection iconSource={images.icons.heart} sectionTitle="Result">
-        <Text style={{...styles.resultHeading, color: result ? colours.brandDarkRed : colours.textDarkBlue}}>
-          {result ? "POSITIVE" : "NEGATIVE"} </Text>
-        <Text style={{...styles.resultMessage, color: result ? colours.brandLightOrange : colours.brandPalePurple}}>
-          {result ? POSTIVE_MESSAGE : NEGATIVE_MESSAGE} </Text>
+        <Text
+          style={{
+            ...styles.resultHeading,
+            color: result ? colours.brandDarkRed : colours.textDarkBlue,
+          }}>
+          {result ? 'POSITIVE' : 'NEGATIVE'}{' '}
+        </Text>
+        <Text
+          style={{
+            ...styles.resultMessage,
+            color: result ? colours.brandLightOrange : colours.brandPalePurple,
+          }}>
+          {result ? POSTIVE_MESSAGE : NEGATIVE_MESSAGE}{' '}
+        </Text>
       </ResultSection>
       <ResultSection
         iconSource={images.icons.thermometer}
         sectionTitle="Temperature">
         <View style={styles.temperatureContent}>
           <View style={styles.avgTemp}>
-            <Text style={{...styles.boldText, fontSize: 40}}>{avgTemp + '\u2103'}</Text>
+            <Text style={{...styles.boldText, fontSize: 40}}>
+              {avgTemp + '\u2103'}
+            </Text>
             <Text
               style={{
                 ...styles.boldText,
@@ -194,7 +202,7 @@ const ResultScreen = ({navigation}: any) => {
           <View style={styles.modalContent}>
             <PHColorPicker
               phValue={phValue}
-              setPhValue={(value) => {
+              setPhValue={value => {
                 setPhValue(value);
                 User.updatePH(value);
               }}
