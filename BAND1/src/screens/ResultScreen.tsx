@@ -166,18 +166,6 @@ const ResultScreen = ({navigation}: any) => {
         <HorizontalTextIconRow
           textStyle={styles.boldText}
           text="Current pH color:">
-          {/* <PressableIcon
-            onPress={() => {
-              console.log('icon clicked');
-            }}>
-            <Image style={styles.image} source={images.icons.camera} />
-          </PressableIcon> */}
-          {/* <PressableIcon
-            onPress={() => {
-              console.log('icon clicked');
-            }}>
-            <Image style={styles.image} source={images.icons.arrow} />
-          </PressableIcon> */}
           <PressableIcon
             onPress={() => {
               setModalVisible(true);

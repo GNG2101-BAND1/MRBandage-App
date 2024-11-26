@@ -13,6 +13,7 @@ import {
 } from '../backend/BluetoothManager';
 import {Peripheral} from 'react-native-ble-manager';
 import {generateTemperatures} from '../backend/MockDataGenerator';
+import {images} from '../Values';
 
 type DisplayBoxContentProps = {
   stepNumber: number;
@@ -22,7 +23,6 @@ type DisplayBoxContentProps = {
   setButtonText: any;
 };
 
-// temporary brute force rendering of box content change
 const DisplayBoxContent = ({
   stepNumber,
   deviceList = null,
@@ -105,26 +105,14 @@ const DisplayBoxContent = ({
       return (
         <View style={{padding: 10}}>
           <Text style={{marginBottom: 10, ...styles.boldText}}>
-            Connected Device:
+            Device calibration:
           </Text>
-          <DeviceBox
-            key={selectedDevice?.id}
-            device={selectedDevice}
-            iconSource={{
-              uri: 'https://pngimg.com/d/wifi_PNG62360.png',
-            }}
-            onSelect={() => {
-              console.log('Clicked');
-            }}
-            viewStyle={[
-              styles.viewContainer,
-              styles.leftAlignContainer,
-              styles.iconTextBox,
-              // styles.selectedIconTextBox,
-            ]}
-            iconStyle={(styles.image, styles.iconTextBoxImage)}
-            textStyle={styles.deviceTitle}
-            activeOpacity={1}
+          <Text style={{marginBottom: 10, ...styles.text}}>
+            Attach the device onto the skin surface to calibrate temperature
+          </Text>
+          <Image
+            style={styles.attachmentImage}
+            source={images.images.deviceAttachment}
           />
         </View>
       );
@@ -141,6 +129,8 @@ const ConnectScreen = ({navigation}: any) => {
   const [deviceList, setDeviceList] = useState(new Array());
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [calibration, setCalibration] = useState(''); // 10-second countdown
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
@@ -183,7 +173,12 @@ const ConnectScreen = ({navigation}: any) => {
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       nextStep();
-      console.log(stepNumber + 1);
+      Alert.alert('Device Connected', selectedDevice, [
+        {
+          text: 'Continue',
+          onPress: () => console.log('Continue'),
+        },
+      ]);
     }, DEBUGGING_MOCK_LOAD_TIME);
 
     return () => clearTimeout(timeoutId);
@@ -201,10 +196,7 @@ const ConnectScreen = ({navigation}: any) => {
 
   const nextStep = () => {
     if (stepNumber < numberOfSteps) {
-      stepNumber === 4 ? setButtonText('Continue') : null;
       setStepNumber(prev => prev + 1);
-      console.log(stepNumber + 1);
-      setButtonText(stepNumber === 2 ? 'Continue' : 'Connect Device');
     } else {
       navigation.navigate('Result');
     }
@@ -222,6 +214,7 @@ const ConnectScreen = ({navigation}: any) => {
         setStepNumber(2);
         setSelectedDevice(null);
         setButtonText('Select Device');
+        setCalibration(''); // reset calibration
         disconnectDevice();
         break;
     }
@@ -241,18 +234,41 @@ const ConnectScreen = ({navigation}: any) => {
       console.log('Mocking connection');
       mockConnection();
       generateTemperatures();
+      setButtonText('Start Calibration');
       // console.log('Connecting to ' + selectedDevice?.name);
       // connect();
+    } else if (stepNumber === 4 && calibration === '') {
+      startCalibration();
     } else {
       nextStep();
     }
+  };
+  const startCalibration = () => {
+    // currently mocking calibration for 10seconds
+    let timer = 10;
+    let dotCount = 0; // To cycle through the dots
+    setButtonText('Calibrating');
+
+    const intervalId = setInterval(() => {
+      // Update the loading dots
+      dotCount = (dotCount + 1) % 4; // Cycle through 0, 1, 2, 3
+      const dots = '.'.repeat(dotCount); // Generate dots based on dotCount
+      setButtonText(`Calibration in process${dots}`);
+
+      timer -= 1;
+      setCalibration('Calibrating');
+      if (timer === 0) {
+        setCalibration('Calibrated');
+        clearInterval(intervalId);
+        Alert.alert('Calibration Complete', 'The device is ready for use.');
+        setButtonText('Continue');
+      }
+    }, 1000);
   };
 
   return (
     <View style={styles.screen}>
       <BigLogo name="MRBandage" slogan="Detect your infections early" />
-
-      {/* add code to show display box here */}
       <DisplayBox visible={stepNumber > 0 || isLoading}>
         <DisplayBoxContent
           stepNumber={stepNumber}
@@ -269,15 +285,23 @@ const ConnectScreen = ({navigation}: any) => {
           styles.centerAlignContainer,
           styles.bottomAlignContainer,
         ]}>
-        <ProgressBar
-          numberOfPages={numberOfSteps}
-          activePage={Math.round(stepNumber / 2.5)}
-        />
+        {stepNumber === 4 && calibration === 'Calibrating' ? (
+          <Text style={[styles.boldText, styles.calibrationText]}>
+            {buttonText}
+          </Text>
+        ) : (
+          <ProgressBar
+            numberOfPages={numberOfSteps}
+            activePage={Math.round(stepNumber / 2.5)}
+          />
+        )}
 
-        {stepNumber === 1 || stepNumber === 3 ? null : (
+        {stepNumber === 1 ||
+        stepNumber === 3 ||
+        calibration === 'Calibrating' ? null : (
           <Button title={buttonText} onPress={initiateConnection} />
         )}
-        {stepNumber > 1 && stepNumber !== 3 ? (
+        {stepNumber > 1 && stepNumber !== 3 && calibration !== 'Calibrating' ? (
           <Button
             title="Back"
             onPress={previousStep}
