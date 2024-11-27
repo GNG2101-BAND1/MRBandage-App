@@ -6,13 +6,14 @@ import ProgressBar from '../components/ProgressBar';
 import Button from '../components/Button';
 import DisplayBox from '../components/DisplayBox';
 import DeviceBox from '../components/DeviceBox';
+
 import {
   connectDevice,
   disconnectDevice,
   startScan,
   startCalibration,
   start,
-  stop
+  stop,
 } from '../backend/BluetoothManager';
 import {Peripheral} from 'react-native-ble-manager';
 import {generateTemperatures} from '../backend/MockDataGenerator';
@@ -137,7 +138,7 @@ const ConnectScreen = ({navigation}: any) => {
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
-    stop();  // always stop in case the device is connected
+    stop(); // always stop in case the device is connected
 
     return () => {
       console.log('ConnectScreen unmounted');
@@ -208,7 +209,7 @@ const ConnectScreen = ({navigation}: any) => {
   };
 
   const previousStep = () => {
-    stop();  // always stop when back is connected in case the device is connected
+    stop(); // always stop when back is connected in case the device is connected
 
     switch (stepNumber) {
       case 2:
@@ -250,7 +251,7 @@ const ConnectScreen = ({navigation}: any) => {
       nextStep();
     }
   };
-  
+
   const initializeCalibration = () => {
     // currently mocking calibration for 10seconds
     // let timer = 10;
@@ -262,17 +263,17 @@ const ConnectScreen = ({navigation}: any) => {
       dotCount = (dotCount + 1) % 4; // Cycle through 0, 1, 2, 3
       const dots = '.'.repeat(dotCount); // Generate dots based on dotCount
       setButtonText(`Calibration in process${dots}`);
-
-      setCalibration('Calibrating');
-      
-      startCalibration().then(() => {
-        setCalibration('Calibrated');
-        clearInterval(intervalId);
-        Alert.alert('Calibration Complete', 'The device is ready for use.');
-        start();
-        setButtonText('Continue');
-      })
     }, 1000);
+
+    setCalibration('Calibrating');
+
+    startCalibration().then(() => {
+      setCalibration('Calibrated');
+      clearInterval(intervalId);
+      Alert.alert('Calibration Complete', 'The device is ready for use.');
+      start();
+      setButtonText('Continue');
+    });
   };
 
   return (
