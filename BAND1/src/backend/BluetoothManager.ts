@@ -54,11 +54,11 @@ const handleConnection = (peripheralId: string) => {
     connectedDevice = peripheralId;
     BleManager.retrieveServices(peripheralId).then((info: PeripheralInfo) => {
         console.log('info: ' + info);
-        // BleManager.startNotification(connectedDevice, BATTERY_SERVICE, BATTERY_CHARACTERISTIC).then(
-        //     () => {
-        //         console.log("Started notifcation on battery");
-        //     }
-        // );
+        BleManager.startNotification(connectedDevice, BATTERY_SERVICE, BATTERY_CHARACTERISTIC).then(
+            () => {
+                console.log("Started notifcation on battery");
+            }
+        );
         BleManager.startNotification(connectedDevice, THERMOMETER_SERVICE, TEMPERATURE_CHARACTERISTIC).then(
             () => {
                 console.log("Started notifcation on temperature");
@@ -86,11 +86,11 @@ const handleDisconnection = () => {
             console.log('notification stopped for temperature');
         }
     );
-    // BleManager.stopNotification(connectedDevice, BATTERY_SERVICE, BATTERY_CHARACTERISTIC).then(
-    //     () => {
-    //         console.log('notifcation stopped for battery');
-    //     }
-    // );
+    BleManager.stopNotification(connectedDevice, BATTERY_SERVICE, BATTERY_CHARACTERISTIC).then(
+        () => {
+            console.log('notifcation stopped for battery');
+        }
+    );
 }
 
 /**
@@ -106,14 +106,20 @@ const startCalibration = () => {
                 const data = Buffer.from(value).readInt16LE(0);
                 console.log(`Received ${data} for characteristic ${characteristic}`);
     
-                if (prev) {
-                    User.calibrate((prev + data) / 200);
-                    console.debug("calibrated temp: " + (prev + data) / 200);
-                    canStart = true;
-                    listener.remove();
-                    resolve();
-                } else {
-                    prev = data;
+                if (characteristic === TEMPERATURE_CHARACTERISTIC) {
+                    if (prev) {
+                        if (checkTemperature(data)) {
+                            User.calibrate((prev + data) / 200);
+                            console.debug("calibrated temp: " + (prev + data) / 200);
+                            canStart = true;
+                            listener.remove();
+                            resolve();
+                        }
+                    } else {
+                        if (checkTemperature(data)) {
+                            prev = data;
+                        }
+                    }
                 }
             }
         );
@@ -135,7 +141,13 @@ const start = () => {
             const data = Buffer.from(value).readInt16LE(0);
             console.log(`Received ${data} for characteristic ${characteristic}`);
 
-            User.updateTemp(data / 100);
+            if (characteristic === TEMPERATURE_CHARACTERISTIC) {
+                if (checkTemperature(data)) {
+                    User.updateTemp(data / 100);
+                }
+            } else if (characteristic === BATTERY_CHARACTERISTIC) {
+                console.log(`Battery: ${data}`);
+            }
         }
     );
 }
@@ -144,6 +156,10 @@ const stop = () => {
     if (espTempListener != undefined) {
         espTempListener.remove();
     }
+}
+
+const checkTemperature = (temperature: number) => {
+    return temperature > 10 && temperature < 50;  // discard any potentially erroneous values sent by esp
 }
 
 BleEventEmitter.addListener('BleManagerDiscoverPeripheral', (peripheral: Peripheral) => {
