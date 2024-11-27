@@ -1,6 +1,6 @@
 import BleManager, {Peripheral, PeripheralInfo} from 'react-native-ble-manager';
 import { checkMultiple, PERMISSIONS, request, Permission, RESULTS } from 'react-native-permissions';
-import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
+import { NativeModules, Platform, NativeEventEmitter, EmitterSubscription } from 'react-native';
 import { Buffer } from 'react-native-buffer';
 import { User } from './UserData';
 
@@ -21,6 +21,7 @@ const discoveredDevices: Map<string, any> = new Map();
 
 let connectedDevice: string = '';
 let canStart = false;
+let espTempListener: EmitterSubscription | undefined;
 
 const startScan = (onStart: () => void = () => {}, onComplete: (devices: Map<string, any>) => void = () => {}) => {
 
@@ -68,13 +69,15 @@ const handleConnection = (peripheralId: string) => {
 
 const disconnectDevice = (onDisconnect: () => void = () => {}) => {
     handleDisconnection();
-    BleManager.disconnect(connectedDevice).then(() => {
-        console.log('disconnected');
-        connectedDevice = '';
-        onDisconnect();
-    }).catch((reason) => {
-        console.error('disconnect failed: ' + reason);
-    });
+    if (connectedDevice) {
+        BleManager.disconnect(connectedDevice).then(() => {
+            console.log('disconnected');
+            connectedDevice = '';
+            onDisconnect();
+        }).catch((reason) => {
+            console.error('disconnect failed: ' + reason);
+        });
+    }
 }
 
 const handleDisconnection = () => {
@@ -95,6 +98,7 @@ const handleDisconnection = () => {
  */
 const startCalibration = () => {
     let prev: number | undefined;
+    User.reset();
 
     return new Promise<void>((resolve, reject) => {
         let listener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
@@ -103,7 +107,8 @@ const startCalibration = () => {
                 console.log(`Received ${data} for characteristic ${characteristic}`);
     
                 if (prev) {
-                    User.calibrate((prev + data) / 2);
+                    User.calibrate((prev + data) / 200);
+                    console.debug("calibrated temp: " + (prev + data) / 200);
                     canStart = true;
                     listener.remove();
                     resolve();
@@ -125,7 +130,7 @@ const start = () => {
         throw new Error("Start calibration must be called before start can be called.");
     }
 
-    BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
+    espTempListener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
         ( {value, peripheral, characteristic, service} ) => {
             const data = Buffer.from(value).readInt16LE(0);
             console.log(`Received ${data} for characteristic ${characteristic}`);
@@ -133,6 +138,12 @@ const start = () => {
             User.updateTemp(data / 100);
         }
     );
+}
+
+const stop = () => {
+    if (espTempListener != undefined) {
+        espTempListener.remove();
+    }
 }
 
 BleEventEmitter.addListener('BleManagerDiscoverPeripheral', (peripheral: Peripheral) => {
@@ -170,4 +181,4 @@ BleManager.enableBluetooth().then(
     }
 );
 
-export {startScan, connectDevice, disconnectDevice, startCalibration, start};
+export {startScan, connectDevice, disconnectDevice, startCalibration, start, stop};

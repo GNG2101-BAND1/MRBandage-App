@@ -11,7 +11,8 @@ import {
   disconnectDevice,
   startScan,
   startCalibration,
-  start
+  start,
+  stop
 } from '../backend/BluetoothManager';
 import {Peripheral} from 'react-native-ble-manager';
 import {generateTemperatures} from '../backend/MockDataGenerator';
@@ -136,6 +137,8 @@ const ConnectScreen = ({navigation}: any) => {
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
+    stop();  // always stop in case the device is connected
+
     return () => {
       console.log('ConnectScreen unmounted');
     };
@@ -205,6 +208,8 @@ const ConnectScreen = ({navigation}: any) => {
   };
 
   const previousStep = () => {
+    stop();  // always stop when back is connected in case the device is connected
+
     switch (stepNumber) {
       case 2:
         setStepNumber(0);
@@ -259,6 +264,7 @@ const ConnectScreen = ({navigation}: any) => {
       setButtonText(`Calibration in process${dots}`);
 
       setCalibration('Calibrating');
+      
       startCalibration().then(() => {
         setCalibration('Calibrated');
         clearInterval(intervalId);
