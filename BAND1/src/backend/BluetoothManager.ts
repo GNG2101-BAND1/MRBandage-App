@@ -56,12 +56,12 @@ const handleConnection = (peripheralId: string) => {
         console.log('info: ' + info);
         BleManager.startNotification(connectedDevice, BATTERY_SERVICE, BATTERY_CHARACTERISTIC).then(
             () => {
-                console.log("Started notifcation on battery");
+                console.log("Started notification on battery");
             }
         );
         BleManager.startNotification(connectedDevice, THERMOMETER_SERVICE, TEMPERATURE_CHARACTERISTIC).then(
             () => {
-                console.log("Started notifcation on temperature");
+                console.log("Started notification on temperature");
             }
         )
     });
@@ -103,14 +103,14 @@ const startCalibration = () => {
     return new Promise<void>((resolve, reject) => {
         let listener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
             ( {value, peripheral, characteristic, service} ) => {
-                const data = Buffer.from(value).readInt16LE(0);
+                const data = Buffer.from(value).readInt16LE(0) / 100;
                 console.log(`Received ${data} for characteristic ${characteristic}`);
     
-                if (characteristic === TEMPERATURE_CHARACTERISTIC) {
+                if (characteristic.toUpperCase() === TEMPERATURE_CHARACTERISTIC) {
                     if (prev) {
                         if (checkTemperature(data)) {
-                            User.calibrate((prev + data) / 200);
-                            console.debug("calibrated temp: " + (prev + data) / 200);
+                            User.calibrate((prev + data) / 2);
+                            console.debug("calibrated temp: " + (prev + data) / 2);
                             canStart = true;
                             listener.remove();
                             resolve();
@@ -138,14 +138,14 @@ const start = () => {
 
     espTempListener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
         ( {value, peripheral, characteristic, service} ) => {
-            const data = Buffer.from(value).readInt16LE(0);
+            const data = Buffer.from(value).readInt16LE(0) / 100;
             console.log(`Received ${data} for characteristic ${characteristic}`);
 
-            if (characteristic === TEMPERATURE_CHARACTERISTIC) {
+            if (characteristic.toUpperCase() === TEMPERATURE_CHARACTERISTIC) {
                 if (checkTemperature(data)) {
-                    User.updateTemp(data / 100);
+                    User.updateTemp(data);
                 }
-            } else if (characteristic === BATTERY_CHARACTERISTIC) {
+            } else if (characteristic.toUpperCase() === BATTERY_CHARACTERISTIC) {
                 console.log(`Battery: ${data}`);
             }
         }
