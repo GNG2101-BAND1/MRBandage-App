@@ -1,11 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {Linking, Text, View, Image, Alert} from 'react-native';
+import {Linking, Text, View, Image, Alert, Platform} from 'react-native';
 import styles from '../Styles';
 import BigLogo from '../components/BigLogo';
 import ProgressBar from '../components/ProgressBar';
 import Button from '../components/Button';
 import DisplayBox from '../components/DisplayBox';
 import DeviceBox from '../components/DeviceBox';
+import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+
+import {openSettings} from 'react-native-permissions';
+
+import notifee, {AuthorizationStatus} from '@notifee/react-native';
 
 import {
   connectDevice,
@@ -25,6 +30,8 @@ type DisplayBoxContentProps = {
   selectedDevice: Peripheral;
   setSelectedDevice: any;
   setButtonText: any;
+  requestPermission: any;
+  setPermStatus: any;
 };
 
 const DisplayBoxContent = ({
@@ -33,8 +40,29 @@ const DisplayBoxContent = ({
   selectedDevice,
   setSelectedDevice,
   setButtonText,
+  requestPermission,
+  setPermStatus,
 }: DisplayBoxContentProps) => {
   switch (stepNumber) {
+    case 0:
+      return (
+        <View>
+          <Text style={{...styles.text, marginBottom: 10}}>
+            • Ensure that notifications are enabled to get required alerts for
+            device.
+          </Text>
+          <Text style={styles.text}>
+            • Ensure that Bluetooth & Local Network permissions are enabled to
+            continue!
+          </Text>
+          <Button
+            buttonStyle={styles.permBtn}
+            buttonTextStyle={styles.permBtnText}
+            title="Request Permissions"
+            onPress={requestPermission} // Trigger the permission request
+          />
+        </View>
+      );
     case 1:
       return (
         <View>
@@ -134,7 +162,87 @@ const ConnectScreen = ({navigation}: any) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [calibration, setCalibration] = useState(''); // 10-second countdown
+  const [calibration, setCalibration] = useState('');
+  const [permStatus, setPermStatus] = useState(false);
+
+  const requestPermission = async () => {
+    try {
+      // notifee permission dialog trigger
+      const settings = await notifee.requestPermission();
+
+      if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+        console.log('Permission settings:', settings);
+      } else {
+        Alert.alert(
+          'Notifications are not enabled.',
+          'Open Settings to app/BAND1/Notifcations to enable.',
+          [
+            {
+              text: 'Cancel',
+              onPress: () =>
+                console.log('Cancel Pressed on Notification alert'),
+              style: 'cancel',
+            },
+            {
+              text: 'Open Notification Settings',
+              onPress: () =>
+                openSettings('notifications').catch(() =>
+                  console.warn('Cannot open app notification settings'),
+                ),
+            },
+          ],
+        );
+        console.log('User declined permissions');
+      }
+
+      // Request Bluetooth Permission
+      if (Platform.OS === 'ios') {
+        const bluetoothStatus = await request(PERMISSIONS.IOS.BLUETOOTH);
+        handlePermissionStatus('Bluetooth', bluetoothStatus);
+      } else if (Platform.OS === 'android') {
+        const bluetoothStatus = await request(
+          PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+        );
+        handlePermissionStatus('Bluetooth', bluetoothStatus);
+      }
+    } catch (error) {
+      console.error('Permission Request Error:', error);
+    }
+
+    if (permStatus) {
+      Alert.alert('Permission granted');
+    }
+  };
+
+  const handlePermissionStatus = (type: string, status: string) => {
+    console.log(`${type} permission status:`, status);
+    if (status === 'granted') {
+      console.log(`${type} permission granted.`);
+      setPermStatus(true);
+    } else if (status === 'blocked') {
+      Alert.alert(
+        `${type} Permission Required`,
+        `Please enable ${type} permissions in settings.`,
+        [
+          {
+            text: 'Cancel',
+            onPress: () =>
+              console.log('Cancel Pressed on bluetooth connection alert'),
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () =>
+              openSettings('application').catch(() =>
+                console.warn('Cannot open app settings'),
+              ),
+          },
+        ],
+      );
+    } else {
+      console.log(`${type} permission status:`, status);
+    }
+  };
 
   useEffect(() => {
     console.log('ConnectScreen mounted');
@@ -217,6 +325,7 @@ const ConnectScreen = ({navigation}: any) => {
         setSelectedDevice(null);
         setButtonText('Connect Device');
         disconnectDevice();
+        setPermStatus(false);
         break;
       case 4:
         setStepNumber(2);
@@ -279,13 +388,15 @@ const ConnectScreen = ({navigation}: any) => {
   return (
     <View style={styles.screen}>
       <BigLogo name="MRBandage" slogan="Detect your infections early" />
-      <DisplayBox visible={stepNumber > 0 || isLoading}>
+      <DisplayBox visible={stepNumber >= 0 || isLoading}>
         <DisplayBoxContent
           stepNumber={stepNumber}
           deviceList={deviceList}
           selectedDevice={selectedDevice}
           setSelectedDevice={setSelectedDevice}
           setButtonText={setButtonText}
+          requestPermission={requestPermission}
+          setPermStatus={setPermStatus}
         />
       </DisplayBox>
 
@@ -309,7 +420,14 @@ const ConnectScreen = ({navigation}: any) => {
         {stepNumber === 1 ||
         stepNumber === 3 ||
         calibration === 'Calibrating' ? null : (
-          <Button title={buttonText} onPress={initiateConnection} />
+          <Button
+            title={buttonText}
+            onPress={
+              permStatus
+                ? initiateConnection
+                : () => Alert.alert('Please request permissions to continue.')
+            }
+          />
         )}
         {stepNumber > 1 && stepNumber !== 3 && calibration !== 'Calibrating' ? (
           <Button

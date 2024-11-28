@@ -308,6 +308,18 @@ const styles = StyleSheet.create({
   calibrationText: {
     paddingBottom: 50,
   },
+  permBtn: {
+    padding: 10,
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  permBtnText: {
+    color: colours.textDarkBlue,
+    fontWeight: 'bold',
+    borderWidth: 2,
+    padding: 10,
+    borderRadius: 10,
+  },
 });
 
 export default styles;
