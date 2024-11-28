@@ -178,7 +178,7 @@ const ResultScreen = ({navigation}: any) => {
         <View style={styles.temperatureContent}>
           <View style={styles.avgTemp}>
             <Text style={{...styles.boldText, fontSize: 40}}>
-              {avgTemp + '\u2103'}
+              {avgTemp ? avgTemp + '\u2103' : '--' + '\u2103'}
             </Text>
             <Text
               style={{
@@ -190,14 +190,18 @@ const ResultScreen = ({navigation}: any) => {
             </Text>
           </View>
           <View>
-            <Text style={styles.boldText}>{'H:  ' + highTemp + '\u2103'}</Text>
+            <Text style={styles.boldText}>
+              {highTemp ? 'H:  ' + highTemp + '\u2103' : 'H: --' + '\u2103'}
+            </Text>
             <View
               style={{
                 borderBottomColor: 'black',
                 borderBottomWidth: 1,
               }}
             />
-            <Text style={styles.boldText}>{'L:  ' + lowTemp + '\u2103'}</Text>
+            <Text style={styles.boldText}>
+              {lowTemp ? 'L:  ' + lowTemp + '\u2103' : 'L: --' + '\u2103'}
+            </Text>
           </View>
         </View>
       </ResultSection>
