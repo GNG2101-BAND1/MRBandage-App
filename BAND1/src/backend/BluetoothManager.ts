@@ -21,7 +21,7 @@ const discoveredDevices: Map<string, any> = new Map();
 
 let connectedDevice: string = '';
 let canStart = false;
-let espTempListener: EmitterSubscription | undefined;
+let espListener: EmitterSubscription | undefined;
 
 const startScan = (onStart: () => void = () => {}, onComplete: (devices: Map<string, any>) => void = () => {}) => {
 
@@ -136,7 +136,7 @@ const start = () => {
         throw new Error("Start calibration must be called before start can be called.");
     }
 
-    espTempListener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
+    espListener = BleEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', 
         ( {value, peripheral, characteristic, service} ) => {
             const data = Buffer.from(value).readInt16LE(0) / 100;
             console.log(`Received ${data} for characteristic ${characteristic}`);
@@ -153,8 +153,8 @@ const start = () => {
 }
 
 const stop = () => {
-    if (espTempListener != undefined) {
-        espTempListener.remove();
+    if (espListener != undefined) {
+        espListener.remove();
     }
 }
 
