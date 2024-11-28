@@ -14,6 +14,7 @@ class UserData extends EventEmitter {
   public maxTempChange: string = 'maxTempChange';
   public highTemp: string = 'highTemp';
   public pHWarning: string = 'pHWarning';
+  public batteryWarning: string = 'batteryWarning';
 
   private initialTemp: number | undefined;
   private temps: number[];
@@ -23,6 +24,7 @@ class UserData extends EventEmitter {
   private infected: boolean;
 
   private currentpH: number | undefined;
+  private currentBattery: number | undefined;
 
   constructor() {
     super();
@@ -48,6 +50,7 @@ class UserData extends EventEmitter {
   public reset() {
     this.initialTemp = undefined;
     this.currentpH = undefined;
+    this.currentBattery = undefined;
 
     this.temps = new Array();
 
@@ -137,6 +140,22 @@ class UserData extends EventEmitter {
   }
 
   /**
+   * Process battery data and emit event if battery is <= 20 percent
+   *
+   * @emits batteryWarning    if the battery percentage value is <= 20 percent
+   */
+  public updateBattery(battery: number) {
+    this.assertCalibrateCalled();
+
+    this.currentBattery = battery;
+
+    if (this.checkBattery()) {
+      // if battery is low
+      this.emit(this.batteryWarning, this.currentBattery); // emit battery warning with current battery
+    }
+  }
+
+  /**
    * Check the current state of the user's temperature data based on the calibrated initial and running sum
    *
    * @returns true if the temperature is a cause for concern
@@ -153,7 +172,18 @@ class UserData extends EventEmitter {
    * @returns true if the pH is a cause for concern
    */
   public checkPH() {
-    return this.currentpH && (this.currentpH > THRESHOLD_PH_HIGH || this.currentpH < THRESHOLD_PH_LOW);
+    return (
+      this.currentpH &&
+      (this.currentpH > THRESHOLD_PH_HIGH || this.currentpH < THRESHOLD_PH_LOW)
+    );
+  }
+
+  public checkBattery() {
+    return (
+      this.currentBattery &&
+      this.currentBattery < 20 &&
+      this.currentBattery >= 0
+    );
   }
 
   /**

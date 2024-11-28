@@ -55,7 +55,7 @@ const InfoBox = ({message}: MessageProps) => {
 };
 
 const ResultScreen = ({navigation}: any) => {
-  const POSTIVE_MESSAGE =
+  const POSITIVE_MESSAGE =
     'Elevated pH and temperature levels suggest possible infection.';
   const NEGATIVE_MESSAGE =
     'Wound is in good condition. Keep it clean and protected.';
@@ -93,9 +93,21 @@ const ResultScreen = ({navigation}: any) => {
     User.on(User.avgTempChange, setAvgTemp);
     User.on(User.maxTempChange, setHighTemp);
     User.on(User.minTempChange, setLowTemp);
-    User.on(User.infectionStatusChange, setResult);
+    User.on(User.infectionStatusChange, result => {
+      setResult(result);
+      onDisplayNotification(
+        'Result Updated',
+        result ? POSITIVE_MESSAGE : NEGATIVE_MESSAGE,
+      );
+    });
+    User.on(User.batteryWarning, currentBattery => {
+      onDisplayNotification(
+        'Low Battery Warning',
+        `Battery is currently at: ${currentBattery}`,
+      );
+    });
     User.on(User.highTemp, () => {
-      Alert.alert('High temperature detected. Please check pH.');
+      onDisplayNotification('High temperature detected', 'Please check pH.');
     });
 
     return () => {
@@ -157,7 +169,7 @@ const ResultScreen = ({navigation}: any) => {
             ...styles.resultMessage,
             color: result ? colours.brandLightOrange : colours.brandPalePurple,
           }}>
-          {result ? POSTIVE_MESSAGE : NEGATIVE_MESSAGE}{' '}
+          {result ? POSITIVE_MESSAGE : NEGATIVE_MESSAGE}{' '}
         </Text>
       </ResultSection>
       <ResultSection
