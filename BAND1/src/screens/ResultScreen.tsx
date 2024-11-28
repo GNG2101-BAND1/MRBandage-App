@@ -1,5 +1,5 @@
 import React, {PropsWithChildren, useEffect, useState} from 'react';
-import {Text, View, Modal, TouchableOpacity} from 'react-native';
+import {Text, View, Modal, TouchableOpacity, Alert} from 'react-native';
 import styles from '../Styles';
 import SmallLogo from '../components/SmallLogo';
 import ProgressBar from '../components/ProgressBar';
@@ -95,7 +95,7 @@ const ResultScreen = ({navigation}: any) => {
     User.on(User.minTempChange, setLowTemp);
     User.on(User.infectionStatusChange, setResult);
     User.on(User.highTemp, () => {
-      setMessage('Please Check pH');
+      Alert.alert('High temperature detected. Please check pH.');
     });
 
     return () => {

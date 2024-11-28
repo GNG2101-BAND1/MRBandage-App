@@ -2,7 +2,8 @@ import {NativeEventEmitter} from 'react-native';
 import EventEmitter from 'events';
 
 const THRESHOLD_TEMPERATURE_CHANGE = 2;
-const THRESHOLD_PH = -1; // temporary value needs to be changed
+const THRESHOLD_PH_HIGH = 8;
+const THRESHOLD_PH_LOW = 7;
 
 const NUMBER_DATA_POINTS = (60 / 5) * 10; // keep shifted average of last 10mins of data
 
@@ -12,7 +13,7 @@ class UserData extends EventEmitter {
   public minTempChange: string = 'minTempChange';
   public maxTempChange: string = 'maxTempChange';
   public highTemp: string = 'highTemp';
-  public highPH: string = 'highPH';
+  public pHWarning: string = 'pHWarning';
 
   private initialTemp: number | undefined;
   private temps: number[];
@@ -104,7 +105,7 @@ class UserData extends EventEmitter {
       this.emit(this.highTemp);
 
       if (!this.infected && this.checkPH()) {
-        this.emit(this.highPH);
+        this.emit(this.pHWarning);
         this.emit(this.infectionStatusChange, true);
       }
     } else if (this.infected) {
@@ -124,7 +125,7 @@ class UserData extends EventEmitter {
     this.currentpH = pH;
 
     if (this.checkPH()) {
-      this.emit(this.highPH);
+      this.emit(this.pHWarning);
 
       if (!this.infected && this.checkTemp()) {
         this.emit(this.highTemp);
@@ -152,7 +153,7 @@ class UserData extends EventEmitter {
    * @returns true if the pH is a cause for concern
    */
   public checkPH() {
-    return this.currentpH && this.currentpH > THRESHOLD_PH;
+    return this.currentpH && (this.currentpH > THRESHOLD_PH_HIGH || this.currentpH < THRESHOLD_PH_LOW);
   }
 
   /**
